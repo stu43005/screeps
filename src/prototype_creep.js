@@ -184,6 +184,11 @@ Creep.prototype.buildRoad = function() {
     this.getEnergyFromStructure();
   }
 
+  // TODO as creep variable
+  if (this.memory.role != 'carry' && this.memory.role != 'harvester') {
+    this.getEnergyFromStructure();
+  }
+
   if (this.carry.energy === 0) {
     return false;
   }
