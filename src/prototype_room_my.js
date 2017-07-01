@@ -397,18 +397,22 @@ Room.prototype.executeRoom = function() {
     this.checkRoleToSpawn('upgrader', 1, this.controller.id);
   }
 
-  var constructionSites = this.findPropertyFilter(FIND_MY_CONSTRUCTION_SITES, 'structureType', [STRUCTURE_ROAD, STRUCTURE_WALL, STRUCTURE_RAMPART], true);
-  if (constructionSites.length > 0) {
-    let amount = 1;
-    for (let cs of constructionSites) {
-      if (cs.structureType === STRUCTURE_STORAGE) {
-        amount = 3;
-      }
-    }
-    this.checkRoleToSpawn('planer', amount);
-  } else if (this.memory.misplacedSpawn && this.storage && this.storage.store.energy > 20000 && this.energyAvailable >= this.energyCapacityAvailable - 300) {
+  if (this.memory.misplacedSpawn && this.storage && this.storage.store.energy > 20000 && this.energyAvailable >= this.energyCapacityAvailable - 300) {
     this.checkRoleToSpawn('planer', 4);
+  } else {
+    // let constructionSites = this.findPropertyFilter(FIND_MY_CONSTRUCTION_SITES, 'structureType', [STRUCTURE_ROAD, STRUCTURE_WALL, STRUCTURE_RAMPART], true);
+    let constructionSites = this.find(FIND_MY_CONSTRUCTION_SITES);
+    if (constructionSites.length > 0) {
+      let amount = 1;
+      for (let cs of constructionSites) {
+        if (cs.structureType === STRUCTURE_STORAGE) {
+          amount = 3;
+        }
+      }
+      this.checkRoleToSpawn('planer', amount);
+    }
   }
+
   let extractors = this.findPropertyFilter(FIND_STRUCTURES, 'structureType', [STRUCTURE_EXTRACTOR]);
   if (this.terminal && extractors.length > 0) {
     let minerals = this.find(FIND_MINERALS);

@@ -85,6 +85,13 @@ roles.harvester.preMove = function(creep, directions) {
     }
   }
 
+  if (!reverse && creep.room.memory.misplacedSpawn) {
+    if (creep.transferEnergyMy()) {
+      creep.memory.routing.reached = true;
+      return true;
+    }
+  }
+
   // TODO Decide between, transfered no more energy (reverse), transferred other structures to transfer available (stay still), transferred no more structures (forward)
   let transferred = creep.transferToStructures();
   if (!reverse && transferred) {
@@ -93,6 +100,7 @@ roles.harvester.preMove = function(creep, directions) {
       return true;
     }
   }
+
   creep.memory.routing.reverse = reverse || !creep.memory.move_forward_direction;
   if (directions && creep.memory.routing.reverse) {
     directions.direction = directions.backwardDirection;

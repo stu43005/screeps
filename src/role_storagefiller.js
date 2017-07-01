@@ -30,6 +30,7 @@ roles.storagefiller.action = function(creep) {
   creep.setNextSpawn();
   creep.spawnReplacement(1);
 
+  // filter: Tower && energy < 50%
   let towers = creep.pos.findInRange(FIND_MY_STRUCTURES, 1, {
     filter: function(object) {
       if (object.structureType != STRUCTURE_TOWER) {

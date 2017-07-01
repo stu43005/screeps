@@ -34,6 +34,11 @@ Room.prototype.spawnCheckForCreate = function() {
   if (this.memory.queue.length === 0) {
     return false;
   }
+  if (!this.exectueEveryTicks(10)) {
+    if (this.energyAvailable < this.energyCapacityAvailable - 300) {
+      return false;
+    }
+  }
   this.memory.queue = _.sortBy(this.memory.queue, c => this.getPriority(c));
 
   let creep = this.memory.queue[0];
@@ -123,6 +128,9 @@ Room.prototype.inRoom = function(creepMemory, amount = 1) {
  * @return {boolean}           if the spawn is not allow, it will return false.
  */
 Room.prototype.checkRoleToSpawn = function(role, amount, targetId, targetRoom, level, base) {
+  if (typeof targetId == 'object' && targetId.id) {
+    targetId = targetId.id;
+  }
   var creepMemory = this.creepMem(role, targetId, targetRoom, level, base);
   if (this.inQueue(creepMemory) || this.inRoom(creepMemory, amount)) { return false; }
 
@@ -267,12 +275,31 @@ Room.prototype.getPartConfig = function(creep) {
   if (prefixString) { maxBodyLength -= prefixString.length; }
   if (sufixString) { maxBodyLength -= sufixString.length; }
 
+  // prefix
+  if (config.debug.getPartsConfLogs) {
+    this.log('[getPartConfig] prefix: ' + prefixString + ', ' + energyAvailable);
+  }
   let prefix = this.getPartsStringDatas(prefixString, energyAvailable);
-  if (prefix.fail) { return false; }
+  if (prefix.fail) {
+    return false;
+  }
+  if (config.debug.getPartsConfLogs) {
+    this.log('[getPartConfig] prefix data: ' + JSON.stringify(prefix));
+  }
   energyAvailable -= prefix.cost || 0;
+
+  // layout
   layoutString = this.applyAmount(layoutString, amount);
+  if (config.debug.getPartsConfLogs) {
+    this.log('[getPartConfig] layout: ' + layoutString + ', ' + energyAvailable);
+  }
   let layout = this.getPartsStringDatas(layoutString, energyAvailable);
-  if (layout.fail || layout.null) { return false; }
+  if (layout.fail || layout.null) {
+    return false;
+  }
+  if (config.debug.getPartsConfLogs) {
+    this.log('[getPartConfig] layout data: ' + JSON.stringify(layout));
+  }
   let parts = prefix.parts || [];
   let maxRepeat = Math.floor(Math.min(energyAvailable / layout.cost, maxBodyLength / layout.len));
   if (maxLayoutAmount) {
@@ -281,8 +308,15 @@ Room.prototype.getPartConfig = function(creep) {
   parts = parts.concat(_.flatten(Array(maxRepeat).fill(layout.parts)));
   energyAvailable -= layout.cost * maxRepeat;
 
+  // sufix
+  if (config.debug.getPartsConfLogs) {
+    this.log('[getPartConfig] sufix: ' + sufixString + ', ' + energyAvailable);
+  }
   let sufix = this.getPartsStringDatas(sufixString, energyAvailable);
   if (!sufix.fail && !sufix.null) {
+    if (config.debug.getPartsConfLogs) {
+      this.log('[getPartConfig] sufix data: ' + JSON.stringify(sufix));
+    }
     parts = parts.concat(sufix.parts);
   }
   if (config.debug.spawn) {
@@ -310,7 +344,10 @@ Room.prototype.getCreepConfig = function(creep) {
   var id = Math.floor((Math.random() * 1000) + 1);
   var name = role + '-' + id;
   var partConfig = this.getPartConfig(creep);
-  if (!partConfig) { return; }
+  if (!partConfig) {
+    this.log('Can not get part config: ' + role + ' ' + JSON.stringify(creep));
+    return;
+  }
   let memory = {
     role: role,
     number: id,
@@ -383,7 +420,7 @@ Room.prototype.checkAndSpawnSourcer = function() {
       filter: isSourcer
     });
     if (sourcers.length === 0) {
-      //      this.log(source.id);
+      // this.log('spawn sourcer for: ' + source.id);
       this.checkRoleToSpawn('sourcer', 1, source.id, this.name);
     }
   }

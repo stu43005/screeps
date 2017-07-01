@@ -174,12 +174,15 @@ Creep.prototype.moveByPathMy = function(route, routePos, start, target, skipPreM
   let path = this.room.getPath(route, routePos, start, target);
   if (!path) {
     // TODO this could be because the targetId Object does not exist anymore
-    // this.log('newmove: no path legacy fallback: ' + this.memory.base + ' ' +
-    // this.room.name + ' ' + this.memory.base + ' ' +
-    // this.memory.routing.targetRoom + ' routePos: ' + routePos + ' route: ' +
-    // JSON.stringify(route));
+    this.log('newmove: no path legacy fallback: ' + this.memory.base + ' ' +
+      this.room.name + ' ' + this.memory.base + ' ' +
+      this.memory.routing.targetRoom + ' routePos: ' + routePos + ' route: ' +
+      JSON.stringify(route));
     this.say('R:no path');
     this.log('R:no path');
+    if (start == 'pathStart' && target == 'harvester') {
+      this.room.setup();
+    }
     // this.log('R:no path: pathStart-' + this.memory.routing.targetId);
     if (!skipPreMove) {
       if (unit.preMove) {

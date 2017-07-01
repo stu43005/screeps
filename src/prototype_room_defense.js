@@ -94,6 +94,21 @@ Room.prototype.handleTower = function() {
   if (towers.length === 0) {
     return false;
   }
+
+  // First heal
+  var myCreepsNeedHeal = this.find(FIND_MY_CREEPS, {
+    filter: function(object) {
+      return object.hits < object.hitsMax;
+    }
+  });
+  if (myCreepsNeedHeal.length > 0) {
+    for (tower_id in towers) {
+      towers[tower_id].heal(myCreepsNeedHeal[0]);
+    }
+    return true;
+  }
+
+  // Secund attack
   var hostileCreeps = this.find(FIND_HOSTILE_CREEPS);
   if (hostileCreeps.length > 0) {
     let tower;
@@ -115,18 +130,6 @@ Room.prototype.handleTower = function() {
     return true;
   }
 
-  var my_creeps = this.find(FIND_MY_CREEPS, {
-    filter: function(object) {
-      return object.hits < object.hitsMax;
-    }
-  });
-  if (my_creeps.length > 0) {
-    for (tower_id in towers) {
-      towers[tower_id].heal(my_creeps[0]);
-    }
-    return true;
-  }
-
   if (this.controller.level < 4) {
     return false;
   }
@@ -135,7 +138,7 @@ Room.prototype.handleTower = function() {
     this.memory.repair_min = 0;
   }
 
-  let repairable_structures = function(object) {
+  let repairableStructureFilter = function(object) {
     if (object.hits === object.hitsMax) {
       return false;
     }
@@ -146,14 +149,14 @@ Room.prototype.handleTower = function() {
       return false;
     }
     // TODO Let see if the creeps can keep the roads alive
-    if (object.structureType === STRUCTURE_ROAD) {
-      return false;
-    }
+    // if (object.structureType === STRUCTURE_ROAD) {
+    //   return false;
+    // }
     return true;
   };
 
   let repair_min = this.memory.repair_min;
-  let repairable_blockers = function(object) {
+  let repairableBlockerFilter = function(object) {
     if (object.hits >= Math.min(repair_min, object.hitsMax)) {
       return false;
     }
@@ -165,9 +168,8 @@ Room.prototype.handleTower = function() {
     }
     return false;
   };
-  let tower;
-  for (var tower_index in towers) {
-    tower = towers[tower_index];
+
+  for (let tower of towers) {
     if (tower.energy === 0) {
       continue;
     }
@@ -177,7 +179,7 @@ Room.prototype.handleTower = function() {
       }
     }
 
-    var low_rampart = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+    let low_rampart = tower.pos.findClosestByRange(FIND_STRUCTURES, {
       filter: function(object) {
         if (object.structureType === 'rampart' && object.hits < 10000) {
           return true;
@@ -185,25 +187,25 @@ Room.prototype.handleTower = function() {
         return false;
       }
     });
-
-    var repair = low_rampart;
-    if (low_rampart === null) {
-      let to_repair = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-        filter: repairable_structures
-      });
-      //      if (to_repair === null) {
-      //        to_repair = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-      //          filter: repairable_blockers
-      //        });
-      //      }
-      //      if (to_repair === null) {
-      //        this.memory.repair_min += 10000;
-      //        this.log('Defense level: ' + this.memory.repair_min);
-      //        continue;
-      //      }
-      repair = to_repair;
-      tower.repair(repair);
+    if (low_rampart !== null) {
+      tower.repair(low_rampart);
+      continue;
     }
+
+    let to_repair = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+      filter: repairableStructureFilter
+    });
+    if (to_repair === null) {
+      to_repair = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+        filter: repairableBlockerFilter
+      });
+    }
+    if (to_repair === null) {
+      this.memory.repair_min += 10000;
+      this.log('Defense level: ' + this.memory.repair_min);
+      break;
+    }
+    tower.repair(to_repair);
   }
   return true;
 };

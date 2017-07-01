@@ -133,7 +133,8 @@
     "visualizer": false,
     "RawVisual": false,
     "LOOK_CREEPS": false,
-    "OBSTACLE_OBJECT_TYPES": false
+    "OBSTACLE_OBJECT_TYPES": false,
+    "RoomVisual": false
   },
   "node": true
 }

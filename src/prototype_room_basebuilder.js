@@ -89,7 +89,11 @@ Room.prototype.destroyStructure = function(structure) {
           this.memory.controllerLevel.checkWrongStructureInterval = 1;
           delete this.memory.walls;
           return true;
+        } else {
+          this.log('Not destorying spawn: planer creeps < 4');
         }
+      } else {
+        this.log('Not destorying spawn: no storage or energy < 20000');
       }
       return false;
     }

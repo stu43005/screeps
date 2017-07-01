@@ -72,8 +72,8 @@ roles.carry.handleMisplacedSpawn = function(creep) {
         }
       }
     }
-    return false;
   }
+  return false;
 };
 
 roles.carry.preMove = function(creep, directions) {
@@ -151,6 +151,7 @@ roles.carry.preMove = function(creep, directions) {
   if (!directions.direction) {
     return false;
   }
+
   let posForward = creep.pos.getAdjacentPosition(directions.direction);
   let structures = posForward.lookFor(LOOK_STRUCTURES);
   for (let structure of structures) {

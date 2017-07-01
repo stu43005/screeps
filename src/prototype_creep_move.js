@@ -92,3 +92,9 @@ Creep.prototype.moveCreep = function(position, direction) {
     }
   }
 };
+
+Creep.prototype.moveToRoom = function(targetRoom) {
+  delete this.memory.routing.route;
+  this.memory.routing.targetRoom = targetRoom;
+  this.memory.routing.reached = false;
+};

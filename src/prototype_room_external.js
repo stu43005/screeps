@@ -231,6 +231,10 @@ Room.prototype.checkBlockedPath = function() {
 };
 
 Room.prototype.checkAndSpawnReserver = function() {
+  if (Game.gcl <= 1) {
+    return false;
+  }
+
   let reservation = this.memory.reservation;
   if (reservation === undefined) {
     // TODO Check the closest room and set reservation
