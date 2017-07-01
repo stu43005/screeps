@@ -87,7 +87,11 @@ Creep.prototype.pickupWhileMoving = function(reverse) {
   }
 
   // TODO Extract to somewhere (also in creep_harvester, creep_carry, config_creep_resources)
-  let resources = _.filter(this.room.getDroppedResources(), this.pickableResources(this));
+  let creep = this;
+  let pickableResources = function(object) {
+    return creep.pos.getRangeTo(object.pos.x, object.pos.y) < 2;
+  };
+  let resources = _.filter(this.room.getDroppedResources(), pickableResources);
 
   if (resources.length > 0) {
     let resource = Game.getObjectById(resources[0].id);
@@ -250,13 +254,22 @@ Creep.prototype.pickupEnergy = function() {
   if (resources.length > 0) {
     let resource = Game.getObjectById(resources[0].id);
     let returnCode = this.pickup(resource);
-    return returnCode === OK;
+    if (returnCode === OK) {
+      if (config.debug.resources) {
+        this.log('pickup resource ' + resource.resourceType + ' ' + resource.amount);
+      }
+      return true;
+    }
+    return false;
   }
 
   let containers = this.pos.findInRangeStructures(FIND_STRUCTURES, 1, [STRUCTURE_CONTAINER]);
   if (containers.length > 0) {
     let returnCode = this.withdraw(containers[0], RESOURCE_ENERGY);
     if (returnCode === OK) {
+      if (config.debug.resources) {
+        this.log('withdraw from ' + containers[0].structureType + ' ' + containers[0].store);
+      }
       return true;
     }
   }
@@ -272,6 +285,9 @@ Creep.prototype.pickupEnergy = function() {
   if (sourcers.length > 0) {
     let returnCode = sourcers[0].transfer(this, RESOURCE_ENERGY);
     if (returnCode === OK) {
+      if (config.debug.resources) {
+        this.log('transfer from ' + sourcers[0].name + ' ' + sourcers[0].carry.energy);
+      }
       return true;
     }
   }
@@ -311,6 +327,9 @@ Creep.prototype.transferToCreep = function(direction) {
     }
     var return_code = this.transfer(otherCreep, RESOURCE_ENERGY);
     if (return_code === OK) {
+      if (config.debug.resources) {
+        this.log('transfer to ' + otherCreep.name);
+      }
       return this.carry.energy * 0.5 <= otherCreep.carryCapacity - otherCreep.carry.energy;
     }
   }
@@ -352,6 +371,14 @@ let harvesterTarget = function(creep, object) {
   return true;
 };
 
+let isStore = function(object) {
+  let structureTypes = [STRUCTURE_STORAGE, STRUCTURE_TERMINAL, STRUCTURE_CONTAINER];
+  if (structureTypes.indexOf(object.structureType) >= 0) {
+    return true;
+  }
+  return false;
+};
+
 let filterTransferrables = function(creep, object) {
   if (!canStoreEnergy(object)) {
     return false;
@@ -369,8 +396,17 @@ let filterTransferrables = function(creep, object) {
     return false;
   }
 
-  if (object.energy === object.energyCapacity) {
-    return false;
+  if (isStore(object)) {
+    if (object.store === object.storeCapacity) {
+      return false;
+    }
+  } else {
+    if (object.structureType == STRUCTURE_TOWER && object.energy > 0.5 * object.energyCapacity) {
+      return false;
+    }
+    if (object.energy === object.energyCapacity) {
+      return false;
+    }
   }
 
   return true;
@@ -413,15 +449,18 @@ Creep.prototype.transferToStructures = function() {
         };
       }
       transferred = this.transferAllResources(item.structure);
+      if (config.debug.resources && transferred) {
+        this.log('transfer to ' + item.structure.structureType + ' ' + transferred);
+      }
     }
   }
-  if (transferred) {
-    return {
-      moreStructures: false,
-      // TODO handle different type of resources on the structure side
-      transferred: transferred
-    };
-  }
+  // if (transferred) {
+  //   return {
+  //     moreStructures: false,
+  //     // TODO handle different type of resources on the structure side
+  //     transferred: transferred
+  //   };
+  // }
   return false;
 };
 

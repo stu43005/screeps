@@ -202,7 +202,7 @@ Room.prototype.handleTower = function() {
     }
     if (to_repair === null) {
       this.memory.repair_min += 10000;
-      this.log('Defense level: ' + this.memory.repair_min);
+      this.log('[tower] Defense level: ' + this.memory.repair_min);
       break;
     }
     tower.repair(to_repair);

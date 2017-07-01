@@ -95,6 +95,12 @@ Room.prototype.splitRoomName = function() {
   return result;
 };
 
+Room.prototype.findCreep = function(role) {
+  return function(creep) {
+    return creep.memory.role == role;
+  };
+};
+
 Room.pathToString = function(path) {
   if (!config.performance.serializePath) {
     return path;

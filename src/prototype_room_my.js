@@ -400,8 +400,8 @@ Room.prototype.executeRoom = function() {
   if (this.memory.misplacedSpawn && this.storage && this.storage.store.energy > 20000 && this.energyAvailable >= this.energyCapacityAvailable - 300) {
     this.checkRoleToSpawn('planer', 4);
   } else {
-    // let constructionSites = this.findPropertyFilter(FIND_MY_CONSTRUCTION_SITES, 'structureType', [STRUCTURE_ROAD, STRUCTURE_WALL, STRUCTURE_RAMPART], true);
-    let constructionSites = this.find(FIND_MY_CONSTRUCTION_SITES);
+    let constructionSites = this.findPropertyFilter(FIND_MY_CONSTRUCTION_SITES, 'structureType', [STRUCTURE_ROAD, STRUCTURE_WALL, STRUCTURE_RAMPART], true);
+    // let constructionSites = this.find(FIND_MY_CONSTRUCTION_SITES);
     if (constructionSites.length > 0) {
       let amount = 1;
       for (let cs of constructionSites) {
