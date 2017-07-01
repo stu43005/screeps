@@ -27,16 +27,19 @@ Room.prototype.setMemoryCostMatrix = function(costMatrix) {
     }
     this.memory.costMatrix.base = costMatrix.serialize();
   }
-  cache.rooms[this.name].costMatrix.base = costMatrix;
+  global.cache.rooms[this.name].costMatrix.base = costMatrix;
 };
 
 Room.prototype.checkCache = function() {
   this.memory.routing = this.memory.routing || {};
-  cache.rooms[this.name] = cache.rooms[this.name] || {
+  global.cache.rooms[this.name] = global.cache.rooms[this.name] || {
     find: {},
     costMatrix: {},
     routing: {}
   };
+  global.cache.rooms[this.name].find = global.cache.rooms[this.name].find || {};
+  global.cache.rooms[this.name].costMatrix = global.cache.rooms[this.name].costMatrix || {};
+  global.cache.rooms[this.name].routing = global.cache.rooms[this.name].routing || {};
 };
 
 /**
@@ -46,15 +49,15 @@ Room.prototype.checkCache = function() {
 Room.prototype.getMemoryCostMatrix = function() {
   this.checkCache();
 
-  if (!cache.rooms[this.name].costMatrix.base) {
-    // this.log(JSON.stringify(cache.rooms[this.name].costMatrix));
-    // this.log(JSON.stringify(cache.rooms[this.name]));
+  if (!global.cache.rooms[this.name].costMatrix.base) {
+    // this.log(JSON.stringify(global.cache.rooms[this.name].costMatrix));
+    // this.log(JSON.stringify(global.cache.rooms[this.name]));
     if (!this.memory.costMatrix || !this.memory.costMatrix.base) {
       return;
     }
-    cache.rooms[this.name].costMatrix.base = PathFinder.CostMatrix.deserialize(this.memory.costMatrix.base);
+    global.cache.rooms[this.name].costMatrix.base = PathFinder.CostMatrix.deserialize(this.memory.costMatrix.base);
   }
-  return cache.rooms[this.name].costMatrix.base;
+  return global.cache.rooms[this.name].costMatrix.base;
 };
 
 /**
@@ -64,7 +67,7 @@ Room.prototype.getMemoryCostMatrix = function() {
 Room.prototype.getMemoryPaths = function() {
   this.checkCache();
   let memoryKeys = Object.keys(this.memory.routing).sort();
-  let cacheKeys = Object.keys(cache.rooms[this.name].routing).sort();
+  let cacheKeys = Object.keys(global.cache.rooms[this.name].routing).sort();
   let diff = _.difference(memoryKeys, cacheKeys);
   for (let item of diff) {
     //    this.log(`getPaths ${item} missing in cache`);
@@ -76,14 +79,14 @@ Room.prototype.getMemoryPaths = function() {
       this.memory.routing[item].path = Room.pathToString(path);
     }
 
-    cache.rooms[this.name].routing[item] = {
+    global.cache.rooms[this.name].routing[item] = {
       path: path,
       created: this.memory.routing[item].created,
       fixed: this.memory.routing[item].fixed,
       name: this.memory.routing[item].name
     };
   }
-  return cache.rooms[this.name].routing;
+  return global.cache.rooms[this.name].routing;
 };
 
 /**
@@ -99,7 +102,7 @@ Room.prototype.getMemoryPath = function(name) {
     return path.fixed || path.created > Game.time - config.path.refresh;
   };
 
-  if (cache.rooms[this.name].routing[name] && isValid(cache.rooms[this.name].routing[name])) {
+  if (global.cache.rooms[this.name].routing[name] && isValid(global.cache.rooms[this.name].routing[name])) {
     return cache.rooms[this.name].routing[name].path;
   }
 
@@ -112,13 +115,13 @@ Room.prototype.getMemoryPath = function(name) {
       path = this.memory.routing[name].path;
       this.memory.routing[name].path = Room.pathToString(path);
     }
-    cache.rooms[this.name].routing[name] = {
+    global.cache.rooms[this.name].routing[name] = {
       path: path,
       created: this.memory.routing[name].created,
       fixed: this.memory.routing[name].fixed,
       name: this.memory.routing[name].name
     };
-    return cache.rooms[this.name].routing[name].path;
+    return global.cache.rooms[this.name].routing[name].path;
   }
   return false;
 };
@@ -128,7 +131,7 @@ Room.prototype.getMemoryPath = function(name) {
  */
 Room.prototype.deleteMemoryPaths = function() {
   this.checkCache();
-  delete cache.rooms[this.name].routing;
+  delete global.cache.rooms[this.name].routing;
   delete this.memory.routing;
 };
 
@@ -139,7 +142,7 @@ Room.prototype.deleteMemoryPaths = function() {
  */
 Room.prototype.deleteMemoryPath = function(name) {
   this.checkCache();
-  delete cache.rooms[this.name].routing[name];
+  delete global.cache.rooms[this.name].routing[name];
   delete this.memory.routing[name];
 };
 
@@ -159,7 +162,7 @@ Room.prototype.setMemoryPath = function(name, path, fixed) {
     fixed: fixed,
     name: name
   };
-  cache.rooms[this.name].routing[name] = data;
+  global.cache.rooms[this.name].routing[name] = data;
   if (fixed) {
     let memoryData = {
       path: Room.pathToString(path),

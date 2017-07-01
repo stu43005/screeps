@@ -34,16 +34,16 @@ Room.prototype.findPropertyFilter = function(findTarget, property, properties, w
   let key = `${findTarget} ${property} ${properties} ${without}`;
   this.checkCache();
 
-  if (cache.rooms[this.name].find[key] && cache.rooms[this.name].find[key].time === Game.time) {
-    // this.log(`Found ${key} ${cache.rooms[this.name].find[key]}`);
-    return cache.rooms[this.name].find[key].result;
+  if (global.cache.rooms[this.name].find[key] && global.cache.rooms[this.name].find[key].time === Game.time) {
+    // this.log(`Found ${key} ${global.cache.rooms[this.name].find[key]}`);
+    return global.cache.rooms[this.name].find[key].result;
   }
   let table = {};
   _.each(properties, e => table[e] = true);
   let result = this.find(findTarget, {
     filter: s => without ? !table[s[property]] : table[s[property]]
   });
-  cache.rooms[this.name].find[key] = {
+  global.cache.rooms[this.name].find[key] = {
     time: Game.time,
     result: result
   };
