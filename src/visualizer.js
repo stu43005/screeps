@@ -92,7 +92,12 @@ if (config.visualizer.enabled) {
             info.push('Controller Lv.' + room.controller.level + ' - Progress: ' + (Math.floor(room.controller.progress / room.controller.progressTotal * 10000) / 100) + '%');
           }
           if (room.storage && room.storage.my) {
-            info.push('Storage: ' + room.storage.store[RESOURCE_ENERGY].toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'));
+            info.push('Storage energy: ' + global.utils.toThousands(room.storage.store[RESOURCE_ENERGY]));
+          }
+
+          let dropedEnergy = _.sum(room.findPropertyFilter(FIND_DROPPED_RESOURCES, 'resourceType', [RESOURCE_ENERGY]), resource => resource.amount);
+          if (dropedEnergy > 0) {
+            info.push('Droped energy: ' + global.utils.toThousands(dropedEnergy));
           }
 
           let spawns = room.find(FIND_MY_SPAWNS, {

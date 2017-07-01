@@ -13,6 +13,10 @@ global.utils = {
     return (object && object.length) ? object.length : _.size(object);
   },
 
+  toThousands: function toThousands(num) {
+    return (num || 0).toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
+  },
+
   checkPlayers: function() {
     for (let name in Memory.players) {
       let player = Memory.players[name];
