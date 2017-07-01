@@ -1,0 +1,21 @@
+{
+	"folders":
+	[
+		{
+			"path": "."
+		},
+		{
+			"path": "C:\\Users\\stu43\\AppData\\Local\\Screeps\\scripts"
+		}
+	],
+	"build_systems":
+	[
+		{
+			"name": "grunt local",
+			"cmd": ["grunt", "local"],
+			"windows": {
+				"cmd": ["grunt.cmd", "local"]
+			}
+		}
+	]
+}

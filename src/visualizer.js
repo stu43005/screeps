@@ -83,6 +83,41 @@ if (config.visualizer.enabled) {
           });
         }
 
+        if (config.visualizer.showRoomInfo) {
+          let info = [];
+
+          info.push('Room ' + room.name);
+
+          if (room.controller && room.controller.my) {
+            info.push('Controller Lv.' + room.controller.level + ' - Progress: ' + (Math.floor(room.controller.progress / room.controller.progressTotal * 10000) / 100) + '%');
+          }
+          if (room.storage && room.storage.my) {
+            info.push('Storage: ' + room.storage.store[RESOURCE_ENERGY].toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'));
+          }
+
+          let spawns = room.find(FIND_MY_SPAWNS, {
+            filter: s => s.spawning
+          });
+          _.each(spawns, spawn => {
+            info.push('Spawning ' + spawn.spawning.name + ' - remaining: ' + spawn.spawning.remainingTime + ' / ' + spawn.spawning.needTime);
+          });
+
+          if (room.memory.queue && room.memory.queue.length > 0) {
+            info.push('In queue: ' + room.memory.queue.map(q => q.role).join(', '));
+          }
+
+          let roomVisual = new RoomVisual(room.name);
+          let y = 0;
+          _.each(info, text => {
+            roomVisual.text(text, 0, y++, {
+              color: 'green',
+              font: '0.6 Noto Sans',
+              stroke: 'black',
+              align: 'left'
+            });
+          });
+        }
+
         visual.commit();
       });
       return true;
