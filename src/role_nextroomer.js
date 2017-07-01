@@ -13,13 +13,18 @@
 roles.nextroomer = {};
 
 roles.nextroomer.died = function(name, creepMemory) {
+  if (!creepMemory || !creepMemory.routing || !creepMemory.routing.route || !creepMemory.routing.routePos) {
+    console.log('DIED', name, 'routing not in memory');
+    return true;
+  }
   let roomName = creepMemory.routing.route[creepMemory.routing.routePos].room;
   let message = `${name} ${roomName} ${JSON.stringify(creepMemory)}`;
   if (roomName === creepMemory.routing.targetRoom) {
     // TODO make underSiege to a counter
   }
   // Works but was annoying due to suppen
-  // console.log('DIED:', message);
+  console.log('DIED:', message);
+  return true;
 };
 
 roles.nextroomer.settings = {
@@ -260,9 +265,16 @@ roles.nextroomer.settle = function(creep) {
   }
 
   let methods = [Creep.getEnergy];
-  if (creep.room.controller.ticksToDowngrade < 1500) {
+  if (creep.room.controller.ticksToDowngrade < 1500 || creep.room.controller.progress > creep.room.controller.progressTotal) {
     methods.push(Creep.upgradeControllerTask);
   }
+
+  let spawnCSs = creep.room.findPropertyFilter(FIND_MY_CONSTRUCTION_SITES, 'structureType', [STRUCTURE_SPAWN]);
+  let spawns = creep.room.findPropertyFilter(FIND_MY_STRUCTURES, 'structureType', [STRUCTURE_SPAWN]);
+  if (spawns.length === 0 && spawnCSs.length > 0) {
+    methods.push(Creep.constructTask);
+  }
+
   let structures = creep.room.findPropertyFilter(FIND_MY_CONSTRUCTION_SITES, 'structureType', [STRUCTURE_RAMPART, STRUCTURE_CONTROLLER], true);
   if (creep.room.controller.level >= 3 && structures.length > 0) {
     methods.push(Creep.constructTask);

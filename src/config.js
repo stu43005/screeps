@@ -39,7 +39,7 @@ global.config = {
   },
 
   stats: {
-    enabled: false,
+    enabled: true,
     summary: false,
   },
 
@@ -122,6 +122,7 @@ global.config = {
     size: 200,
     carryPercentageBase: 0.2,
     carryPercentageExtern: 0.5,
+    maxPerTargetPerRoom: 2,
   },
 
   creep: {
@@ -137,15 +138,15 @@ global.config = {
 
   room: {
     reservedRCL: {
-      0: 0,
-      1: 0,
-      2: 0,
-      3: 0,
+      0: 1,
+      1: 1,
+      2: 1,
+      3: 1,
       4: 1,
-      5: 2,
-      6: 3,
-      7: 6,
-      8: 9,
+      5: 1,
+      6: 1,
+      7: 1,
+      8: 1,
     },
     revive: true,
     rebuildLayout: 7654,
@@ -165,12 +166,14 @@ global.config = {
     plainCost: 5,
     swampCost: 5,
     borderAvoid: 20,
+    skLairAvoidRadius: 5,
+    skLairAvoid: 30,
     wallAvoid: 10,
     pathAvoid: 1,
     structureAvoid: 0xFF,
     creepAvoid: 0xFF,
     wallThickness: 1,
-    version: 16,
+    version: 17,
   },
 
   mineral: {

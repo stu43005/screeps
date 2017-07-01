@@ -91,11 +91,13 @@ Creep.recycleCreep = function(creep) {
       structureType: STRUCTURE_SPAWN
     }
   });
-  if (spawn !== null) {
-    creep.moveToMy(spawn.pos);
+  if (!spawn) {
+    spawn = Game.rooms[creep.memory.base].findPropertyFilter(FIND_MY_STRUCTURES, 'structureType', [STRUCTURE_SPAWN])[0];
+  }
+  if (spawn) {
+    creep.moveTo(spawn);
     spawn.recycleCreep(creep);
   }
-  // TODO move back
   return true;
 };
 
@@ -197,7 +199,6 @@ Creep.prototype.repairStructure = function() {
       delete this.memory.target;
     }
   }
-  this.say('aa');
 
   let nukes = this.room.find(FIND_NUKES);
   if (nukes.length > 0) {
