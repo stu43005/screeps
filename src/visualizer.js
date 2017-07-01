@@ -95,7 +95,12 @@ if (config.visualizer.enabled) {
             info.push('Storage energy: ' + global.utils.toThousands(room.storage.store[RESOURCE_ENERGY]));
           }
 
-          let dropedEnergy = _.sum(room.findPropertyFilter(FIND_DROPPED_RESOURCES, 'resourceType', [RESOURCE_ENERGY]), resource => resource.amount);
+          let containersEnergy = _.sum(room.findPropertyFilter(FIND_STRUCTURES, 'structureType', [STRUCTURE_CONTAINER]), object => object.store[RESOURCE_ENERGY]);
+          if (containersEnergy > 0) {
+            info.push('Container energy: ' + global.utils.toThousands(containersEnergy));
+          }
+
+          let dropedEnergy = _.sum(room.findPropertyFilter(FIND_DROPPED_RESOURCES, 'resourceType', [RESOURCE_ENERGY]), object => object.amount);
           if (dropedEnergy > 0) {
             info.push('Droped energy: ' + global.utils.toThousands(dropedEnergy));
           }
