@@ -16,9 +16,16 @@ roles.carry.flee = true;
 roles.carry.boostActions = ['capacity'];
 
 roles.carry.settings = {
-  prefixString: 'WMC',
+  param: ['controller.level'],
+  prefixString: {
+    1: 'MC',
+    3: 'WMC',
+  },
   layoutString: 'MC',
-  amount: [1, 2]
+  amount: {
+    1: [1, 1],
+    3: [1, 2]
+  }
 };
 
 roles.carry.checkHelperEmptyStorage = function(creep) {
@@ -200,7 +207,7 @@ roles.carry.action = function(creep) {
   }
 
   if (!creep.room.controller) {
-    var target = creep.pos.findClosestSourceKeeper();
+    var target = creep.findClosestSourceKeeper();
     if (target !== null) {
       let range = creep.pos.getRangeTo(target);
       if (range < 5) {

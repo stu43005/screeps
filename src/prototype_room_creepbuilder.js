@@ -197,6 +197,10 @@ Room.prototype.getSettings = function(creep) {
   }
   let param = settings.param;
   return _.mapValues(settings, (setting, settingName) => {
+    // Not sure when this happens
+    if (!setting || setting === null) {
+      return setting;
+    }
     if (!param) {
       return setting;
     }
@@ -206,6 +210,9 @@ Room.prototype.getSettings = function(creep) {
       }
       let valueForI = _.get(this, parameter, 1);
       let foundKey = 0;
+      if (!setting) {
+        break;
+      }
       for (let key of Object.keys(setting)) {
         if (valueForI < key && foundKey !== 0) {
           break;

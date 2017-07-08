@@ -7,7 +7,6 @@ global.roles = {};
 global.cache = {
   rooms: {}
 };
-console.log('!! No global cache !!');
 
 try {
   global.friends = require('friends');
@@ -36,6 +35,7 @@ global.config = {
   // Due to newly introduces via global variable caching this can be removed
   performance: {
     serializePath: true,
+    costMatrixMemoryMaxGCL: 15,
   },
 
   stats: {
@@ -49,6 +49,10 @@ global.config = {
     spawn: false
   },
 
+  tower: {
+    healMyCreeps: false,
+    repairStructures: false
+  },
   autoattack: {
     disabled: false,
     notify: false,
@@ -66,10 +70,10 @@ global.config = {
     ttlPerRoomForScout: 500,
     numberOfNextroomers: 10,
     nextroomerInterval: _.ceil(1500 / 10),
-    maxRooms: 30,
+    maxRooms: 20,
     revive: true,
     maxDistance: 17,
-    minNewRoomDistance: 3,
+    minNewRoomDistance: 2,
     minEnergyForActive: 1000,
     minDowngradPercent: 90,
     notify: false,
@@ -93,6 +97,7 @@ global.config = {
   buildRoad: {
     maxConstructionSitesTotal: 80,
     maxConstructionSitesRoom: 3,
+    buildToOtherMyRoom: false,
   },
 
   constructionSite: {
@@ -120,7 +125,9 @@ global.config = {
 
   carry: {
     size: 200,
-    carryPercentageBase: 0.2,
+    // Percentage should increase from base to target room. Decrease may cause stack on border
+    carryPercentageBase: 0.1,
+    carryPercentageHighway: 0.2,
     carryPercentageExtern: 0.5,
     maxPerTargetPerRoom: 2,
   },

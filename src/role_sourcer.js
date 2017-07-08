@@ -15,19 +15,19 @@ roles.sourcer = {};
 
 roles.sourcer.settings = {
   param: ['controller.level'],
-  prefixString: 'MWC',
+  prefixString: {
+    1: 'MW',
+    3: 'MWC'
+  },
   layoutString: {
-    1: 'W',
+    2: 'W',
     3: 'MW',
     5: 'MW'
   },
   amount: {
-    1: [1],
-    // 3: [0, 3],
-    3: [1, 2],
-    // 5: [0, 6],
-    5: [1, 4],
-    // 5: [2, 4]
+    2: [1],
+    3: [1, 1],
+    5: [2, 4]
   },
   maxLayoutAmount: {
     1: 4,
@@ -110,7 +110,7 @@ roles.sourcer.died = function(name, memory) {
 roles.sourcer.action = function(creep) {
   // TODO check source keeper structure for ticksToSpawn
   if (!creep.room.controller) {
-    var target = creep.pos.findClosestSourceKeeper();
+    var target = creep.findClosestSourceKeeper();
     if (target !== null) {
       let range = creep.pos.getRangeTo(target);
       if (range < 5) {

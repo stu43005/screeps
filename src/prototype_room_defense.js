@@ -96,16 +96,18 @@ Room.prototype.handleTower = function() {
   }
 
   // First heal
-  var myCreepsNeedHeal = this.find(FIND_MY_CREEPS, {
-    filter: function(object) {
-      return object.hits < object.hitsMax;
+  if (config.tower.healMyCreeps) {
+    var myCreepsNeedHeal = this.find(FIND_MY_CREEPS, {
+      filter: function(object) {
+        return object.hits < object.hitsMax;
+      }
+    });
+    if (myCreepsNeedHeal.length > 0) {
+      for (tower_id in towers) {
+        towers[tower_id].heal(myCreepsNeedHeal[0]);
+      }
+      return true;
     }
-  });
-  if (myCreepsNeedHeal.length > 0) {
-    for (tower_id in towers) {
-      towers[tower_id].heal(myCreepsNeedHeal[0]);
-    }
-    return true;
   }
 
   // Secund attack
@@ -132,6 +134,10 @@ Room.prototype.handleTower = function() {
 
   if (this.controller.level < 4) {
     return false;
+  }
+
+  if (!config.tower.repairStructures) {
+    return true;
   }
 
   if (!this.memory.repair_min) {

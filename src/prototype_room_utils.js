@@ -52,7 +52,7 @@ Room.prototype.findPropertyFilter = function(findTarget, property, properties, w
 
 Room.findCreep = function(role) {
   return function(object) {
-    return object.memory.role == role;
+    return object.memory.role === role;
   };
 };
 

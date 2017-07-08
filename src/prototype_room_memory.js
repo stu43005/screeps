@@ -21,7 +21,7 @@
  */
 Room.prototype.setMemoryCostMatrix = function(costMatrix) {
   this.checkCache();
-  if (this.controller && this.controller.my) {
+  if (this.controller && this.controller.my || Game.gcl.level < config.performance.costMatrixMemoryMaxGCL) {
     if (!this.memory.costMatrix) {
       this.memory.costMatrix = {};
     }
@@ -50,8 +50,6 @@ Room.prototype.getMemoryCostMatrix = function() {
   this.checkCache();
 
   if (!global.cache.rooms[this.name].costMatrix.base) {
-    // this.log(JSON.stringify(global.cache.rooms[this.name].costMatrix));
-    // this.log(JSON.stringify(global.cache.rooms[this.name]));
     if (!this.memory.costMatrix || !this.memory.costMatrix.base) {
       return;
     }
@@ -131,7 +129,7 @@ Room.prototype.getMemoryPath = function(name) {
  */
 Room.prototype.deleteMemoryPaths = function() {
   this.checkCache();
-  delete global.cache.rooms[this.name].routing;
+  global.cache.rooms[this.name].routing = {};
   delete this.memory.routing;
 };
 

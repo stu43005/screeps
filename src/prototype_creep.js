@@ -5,8 +5,15 @@ function getOppositeDirection(direction) {
   return ((direction + 3) % 8) + 1;
 }
 
+Creep.prototype.mySignController = function() {
+  if (config.info.signController && !this.room.controller.sign) {
+    let returnCode = this.signController(this.room.controller, config.info.signText);
+    this.log(returnCode);
+  }
+};
+
 Creep.prototype.moveToMy = function(target, range) {
-  range = range || 0;
+  range = range || 1;
   let search = PathFinder.search(
     this.pos, {
       pos: target,
@@ -22,7 +29,7 @@ Creep.prototype.moveToMy = function(target, range) {
     this.say('incomplete');
     return false;
   }
-  return this.move(this.pos.getDirectionTo(search.path[0]));
+  return this.move(this.pos.getDirectionTo(search.path[0] || target.pos || target));
 };
 
 Creep.prototype.inBase = function() {
@@ -52,7 +59,10 @@ Creep.prototype.handle = function() {
     // TODO this happens when the creep is not on the path (maybe pathPos check will solve)
     if (unit.buildRoad) {
       if (this.memory.routing && !this.memory.routing.reached) {
-        this.buildRoad();
+        const target = Game.getObjectById(this.memory.routing.targetId);
+        if (config.buildRoad.buildToOtherMyRoom || !target || target.structureType !== STRUCTURE_STORAGE) {
+          this.buildRoad();
+        }
       }
     }
 
@@ -158,8 +168,8 @@ Creep.prototype.stayInRoom = function() {
 };
 
 Creep.prototype.buildRoad = function() {
-  // TODO make dependent on the swamp to non-swamp relation? High swamp rooms could use the roads better ...
-  if (this.room.controller && this.room.controller.level < 4) {
+  if (this.room.controller && this.room.controller.my &&
+    (this.room.controller.level < 4 || this.room.memory.misplacedSpawn || this.pos.lookFor(LOOK_TERRAIN)[0] === 'swamp')) {
     return false;
   }
 
@@ -212,7 +222,11 @@ Creep.prototype.buildRoad = function() {
   }
 
   constructionSites = this.room.findPropertyFilter(FIND_MY_CONSTRUCTION_SITES, 'structureType', [STRUCTURE_ROAD]);
-  if (constructionSites.length <= config.buildRoad.maxConstructionSitesRoom && Object.keys(Game.constructionSites).length < config.buildRoad.maxConstructionSitesTotal && this.pos.inPath()) {
+  if (
+    constructionSites.length <= config.buildRoad.maxConstructionSitesRoom &&
+    Object.keys(Game.constructionSites).length < config.buildRoad.maxConstructionSitesTotal
+    //&& this.pos.inPath()
+  ) {
     let returnCode = this.pos.createConstructionSite(STRUCTURE_ROAD);
     if (returnCode === OK) {
       return true;

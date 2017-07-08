@@ -9,11 +9,16 @@ require('prototype_room_costmatrix');
 require('visualizer');
 require('screepsplus');
 
+console.log('Starting TooAngel AI - Have fun');
+
 brain.stats.init();
 
 if (config.profiler.enabled) {
   try {
     var profiler = require('screeps-profiler');
+    for (let role of _.keys(roles)) {
+      profiler.registerObject(roles[role], 'Role_' + role);
+    }
     profiler.enable();
   } catch (e) {
     console.log('screeps-profiler not found');
@@ -50,9 +55,4 @@ module.exports.loop = function() {
   } else {
     main();
   }
-  // console.log('--');
-  // console.log(JSON.stringify(_.filter(Object.keys(cache.rooms), function(object) { return !cache.rooms[object].costMatrix; })));
-  // if (cache && cache.rooms && cache.rooms.W1N4) {
-  //   console.log('END W1N4":' + cache.rooms.W1N4.costMatrix);
-  // }
 };
