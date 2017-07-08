@@ -487,7 +487,7 @@ Creep.prototype.moveToSource = function(source) {
   }
   this.memory.routing.reverse = false;
   if (this.room.memory.misplacedSpawn || this.room.controller.level < 3) {
-    this.moveToMy(source.pos);
+    this.moveToMy(source.pos, 1);
   } else {
     this.moveByPathMy([{
       'name': this.room.name

@@ -195,6 +195,6 @@ roles.scoutnextroom.execute = function(creep) {
     }
     return true;
   }
-  creep.say(creep.memory.target.goalRoom);
+  creep.say(creep.memory.goalRoom);
   let returnCode = creep.move(creep.pos.getDirectionTo(search.path[0]));
 };

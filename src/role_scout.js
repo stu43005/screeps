@@ -117,6 +117,14 @@ roles.scout.execute = function(creep) {
       // }
       return false;
     }
+
+    if (search.incomplete) {
+      creep.moveRandom();
+      creep.memory.scoutSkip = true;
+      delete creep.memory.last; // Delete to reset stuckness.
+      return true;
+    }
+
     if (creep.isStuck()) {
       creep.moveRandom();
       creep.say('ImStuck', true);

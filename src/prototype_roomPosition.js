@@ -25,7 +25,7 @@ RoomPosition.prototype.getClosestSource = function() {
 };
 
 RoomPosition.prototype.findInRangeStructures = function(objects, range, structureTypes) {
-  return this.findInRange(objects, 1, {
+  return this.findInRange(objects, range, {
     filter: function(object) {
       return structureTypes.indexOf(object.structureType) >= 0;
     }

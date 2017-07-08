@@ -19,6 +19,7 @@ Creep.prototype.moveToMy = function(target, range) {
 
   if (search.incomplete) {
     this.moveRandom();
+    this.say('incomplete');
     return false;
   }
   return this.move(this.pos.getDirectionTo(search.path[0]));
