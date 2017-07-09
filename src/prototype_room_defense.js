@@ -144,6 +144,13 @@ Room.prototype.handleTower = function() {
     this.memory.repair_min = 0;
   }
 
+  let lowRampartFilter = function(object) {
+    if (object.structureType === STRUCTURE_RAMPART && object.hits < 10000) {
+      return true;
+    }
+    return false;
+  };
+
   let repairableStructureFilter = function(object) {
     if (object.hits === object.hitsMax) {
       return false;
@@ -179,23 +186,19 @@ Room.prototype.handleTower = function() {
     if (tower.energy === 0) {
       continue;
     }
+
+    let lowRampart = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+      filter: lowRampartFilter
+    });
+    if (lowRampart !== null) {
+      tower.repair(lowRampart);
+      continue;
+    }
+
     if (!this.exectueEveryTicks(10)) {
       if (tower.energy < tower.energyCapacity / 2 || this.memory.repair_min > 1000000) {
         continue;
       }
-    }
-
-    let low_rampart = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-      filter: function(object) {
-        if (object.structureType === 'rampart' && object.hits < 10000) {
-          return true;
-        }
-        return false;
-      }
-    });
-    if (low_rampart !== null) {
-      tower.repair(low_rampart);
-      continue;
     }
 
     let to_repair = tower.pos.findClosestByRange(FIND_STRUCTURES, {
