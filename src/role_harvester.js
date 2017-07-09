@@ -27,7 +27,7 @@ roles.harvester.settings = {
       400: [1, 1, 1]
     }
   },
-  maxLayoutAmount: 6,
+  maxLayoutAmount: 6
 };
 roles.harvester.updateSettings = function(room, creep) {
   if (room.storage && room.storage.store.energy > config.creep.energyFromStorageThreshold) {

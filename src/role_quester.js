@@ -7,7 +7,7 @@
 roles.quester = {};
 roles.quester.settings = {
   layoutString: 'M',
-  maxLayoutAmount: 1,
+  maxLayoutAmount: 1
 };
 
 roles.quester.action = function(creep) {

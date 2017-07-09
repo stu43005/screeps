@@ -143,7 +143,7 @@ if (config.visualizer.enabled) {
         '  $.getScript("https://screepers.github.io/screeps-visual/src/visual.screeps.user.js");' +
         '  window.visualLoaded = true;' +
         '}</script>');
-    },
+    }
   };
   visualizer.run();
 }

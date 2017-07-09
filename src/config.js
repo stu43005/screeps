@@ -16,7 +16,7 @@ try {
 
 global.config = {
   profiler: {
-    enabled: false,
+    enabled: false
   },
   visualizer: {
     enabled: false,
@@ -24,7 +24,7 @@ global.config = {
     showCreepPaths: true,
     showStructures: true,
     showCreeps: true,
-    refresh: true,
+    refresh: true
   },
 
   quests: {
@@ -41,12 +41,12 @@ global.config = {
   // Due to newly introduces via global variable caching this can be removed
   performance: {
     serializePath: true,
-    costMatrixMemoryMaxGCL: 15,
+    costMatrixMemoryMaxGCL: 15
   },
 
   stats: {
     enabled: true,
-    summary: false,
+    summary: false
   },
 
   debug: {
@@ -61,7 +61,7 @@ global.config = {
   },
   autoattack: {
     disabled: false,
-    notify: false,
+    notify: false
   },
 
   revive: {
@@ -82,7 +82,7 @@ global.config = {
     minNewRoomDistance: 2,
     minEnergyForActive: 1000,
     minDowngradPercent: 90,
-    notify: false,
+    notify: false
   },
 
   carryHelpers: {
@@ -97,31 +97,31 @@ global.config = {
   power: {
     disabled: false,
     energyForCreeps: 800000,
-    energyForSpawn: 250000,
+    energyForSpawn: 250000
   },
 
   buildRoad: {
     maxConstructionSitesTotal: 80,
     maxConstructionSitesRoom: 3,
-    buildToOtherMyRoom: false,
+    buildToOtherMyRoom: false
   },
 
   constructionSite: {
-    maxIdleTime: 5000,
+    maxIdleTime: 5000
   },
 
   hostile: {
-    remeberInRoom: 1500,
+    remeberInRoom: 1500
   },
 
   path: {
     refresh: 2000000,
     allowRoutingThroughFriendRooms: false,
-    pathfindIncomplete: true,
+    pathfindIncomplete: true
   },
 
   external: {
-    distance: 3,
+    distance: 3
   },
 
   carry: {
@@ -161,7 +161,7 @@ global.config = {
       5: 1,
       6: 1,
       7: 1,
-      8: 1,
+      8: 1
     },
     revive: true,
     rebuildLayout: 7654,
@@ -174,7 +174,7 @@ global.config = {
     scout: true, // TODO somehow broken ?? Is it broken ??
     upgraderMinStorage: 0,
     lastSeenThreshold: 1000000,
-    notify: false,
+    notify: false
   },
 
   layout: {
@@ -188,14 +188,14 @@ global.config = {
     structureAvoid: 0xFF,
     creepAvoid: 0xFF,
     wallThickness: 1,
-    version: 18,
+    version: 18
   },
 
   mineral: {
     enabled: false,
     storage: 100000,
     minAmount: 5000,
-    minAmountForMarket: 100000,
+    minAmountForMarket: 100000
   },
 
   priorityQueue: {
