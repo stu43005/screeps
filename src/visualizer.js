@@ -126,6 +126,25 @@ if (config.visualizer.enabled) {
               align: 'left'
             });
           });
+
+          let creepInfo = [];
+
+          creepInfo.push('My creeps:');
+
+          let myCreeps = _.groupBy(room.find(FIND_MY_CREEPS), creep => creep.memory.role);
+          _.each(myCreeps, (creeps, role) => {
+            creepInfo.push(role + ': ' + creeps.length.toString().rpad(' ', 2));
+          });
+
+          let z = 0;
+          _.each(creepInfo, text => {
+            roomVisual.text(text, 49, z++, {
+              color: 'green',
+              font: '0.6 Noto Sans',
+              stroke: 'black',
+              align: 'right'
+            });
+          });
         }
 
         visual.commit();
