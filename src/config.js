@@ -24,6 +24,8 @@ global.config = {
     showCreepPaths: true,
     showStructures: true,
     showCreeps: true,
+    showRoomInfo: true,
+    showCreepsInfo: true,
     refresh: true,
   },
 
@@ -46,7 +48,8 @@ global.config = {
   debug: {
     getPartsConfLogs: false,
     queue: false,
-    spawn: false
+    spawn: false,
+    resources: false,
   },
 
   tower: {

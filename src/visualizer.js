@@ -126,7 +126,9 @@ if (config.visualizer.enabled) {
               align: 'left'
             });
           });
+        }
 
+        if (config.visualizer.showCreepsInfo) {
           let creepInfo = [];
 
           creepInfo.push('My creeps:');
@@ -136,6 +138,7 @@ if (config.visualizer.enabled) {
             creepInfo.push(role + ': ' + creeps.length.toString().rpad(' ', 2));
           });
 
+          let roomVisual = new RoomVisual(room.name);
           let z = 0;
           _.each(creepInfo, text => {
             roomVisual.text(text, 49, z++, {
