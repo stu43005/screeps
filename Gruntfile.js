@@ -29,7 +29,7 @@ module.exports = function(grunt) {
       options: {
         email: process.env.email || account.email,
         password: process.env.password || account.password,
-        branch: 'default',
+        branch: account.branch || 'default',
         ptr: false
       },
       dist: {
