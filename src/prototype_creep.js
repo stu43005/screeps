@@ -36,6 +36,14 @@ Creep.prototype.inBase = function() {
   return this.room.name === this.memory.base;
 };
 
+Creep.prototype.checkBuildRoad = function() {
+  let unit = roles[this.memory.role];
+  if (typeof unit.buildRoad == 'function') {
+    return unit.buildRoad(this);
+  }
+  return unit.buildRoad;
+};
+
 Creep.prototype.handle = function() {
   if (this.spawning) {
     return;
@@ -57,7 +65,7 @@ Creep.prototype.handle = function() {
     }
 
     // TODO this happens when the creep is not on the path (maybe pathPos check will solve)
-    if (unit.buildRoad) {
+    if (this.checkBuildRoad()) {
       if (this.memory.routing && !this.memory.routing.reached) {
         const target = Game.getObjectById(this.memory.routing.targetId);
         if (config.buildRoad.buildToOtherMyRoom || !target || target.structureType !== STRUCTURE_STORAGE) {
@@ -169,7 +177,7 @@ Creep.prototype.stayInRoom = function() {
 
 Creep.prototype.buildRoad = function() {
   if (this.room.controller && this.room.controller.my && this.pos.lookFor(LOOK_TERRAIN)[0] !== 'swamp' &&
-    (this.room.controller.level < 4 || this.room.memory.misplacedSpawn)) {
+    (this.room.controller.level < config.buildRoad.minLevel || this.room.memory.misplacedSpawn)) {
     return false;
   }
 
@@ -223,7 +231,7 @@ Creep.prototype.buildRoad = function() {
 
   constructionSites = this.room.findPropertyFilter(FIND_MY_CONSTRUCTION_SITES, 'structureType', [STRUCTURE_ROAD]);
   if (
-    constructionSites.length <= config.buildRoad.maxConstructionSitesRoom &&
+    constructionSites.length < config.buildRoad.maxConstructionSitesRoom &&
     Object.keys(Game.constructionSites).length < config.buildRoad.maxConstructionSitesTotal
     //&& this.pos.inPath()
   ) {
