@@ -162,7 +162,7 @@ global.config = {
     handleNukeAttackInterval: 132,
     reviveEnergyCapacity: 1000,
     reviveEnergyAvailable: 1000,
-    reviveStorageAvailable: 3000,
+    reviveStorageAvailable: 100,
     scoutInterval: 1499,
     scoutSkipWhenStuck: true, // Useful for novice areas.
     scout: true, // TODO somehow broken ?? Is it broken ??
