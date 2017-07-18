@@ -18,11 +18,18 @@ roles.upgrader.settings = {
     4: 'W'
   },
   maxLayoutAmount: {
+    6: {
+      0: 0,
+      50000: 20,
+      800000: undefined
+    },
     7: {
+      0: 0,
       50000: 20,
       800000: undefined
     },
     8: {
+      0: 0,
       50000: 1,
       800000: undefined
     }
