@@ -1,5 +1,6 @@
 # TooAngel Artificial intelligence for screeps
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/7cdc61c18abf4b3b89ad6a2f12ca7990)](https://www.codacy.com/app/TooAngel/screeps?utm_source=github.com&utm_medium=referral&utm_content=TooAngel/screeps&utm_campaign=badger)
 [![CircleCI](https://circleci.com/gh/TooAngel/screeps.svg?style=svg)](https://circleci.com/gh/TooAngel/screeps)
 [![Code Climate](https://codeclimate.com/github/TooAngel/screeps/badges/gpa.svg)](https://codeclimate.com/github/TooAngel/screeps)
 [![npm version](https://badge.fury.io/js/screeps-bot-tooangel.svg)](https://badge.fury.io/js/screeps-bot-tooangel)
@@ -52,20 +53,6 @@ E.g.:
 Add a `src/config_local.js` to overwrite configuration values. Copy
 `config_local.js.example` to `src/config_local.js` as an example. `src/config.js`
 has the default values.
-
-## Contributing
-
-All kind of contribution is welcome, issues, contact via channels, pull requests.
-
-Follow this link if you are planning to contribute via pull request.
-
-[Contribution and Workflow](doc/Constribution-and-Workflow.md)
-
-[Issues](https://github.com/TooAngel/screeps/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement)
-with label 'enhancement' exist, which are open for discussion
-and implementation. The description will reflect the latest status of the
-discussion and should end up in the documentation, when finishing the
-implementation.
 
 ## Upload
 

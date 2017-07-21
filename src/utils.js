@@ -17,6 +17,14 @@ global.utils = {
     return (num || 0).toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
   },
 
+  showIdiots: function() {
+    let idiots = _.sortBy(Memory.players, function(o) { return -o.idiot; });
+    for (let i = 0; i < idiots.length; i++) {
+      idiot = idiots[i];
+      console.log(idiot.name, idiot.idiot, idiot.level, idiot.counter);
+    }
+  },
+
   checkPlayers: function() {
     for (let name in Memory.players) {
       let player = Memory.players[name];

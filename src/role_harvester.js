@@ -24,7 +24,7 @@ roles.harvester.settings = {
     1: [2, 1, 1],
     3: {
       0: [2, 1, 1],
-      400: [2, 2, 2],
+      400: [1, 1, 1]
     }
   },
   maxLayoutAmount: 6,
@@ -41,9 +41,7 @@ roles.harvester.updateSettings = function(room, creep) {
 };
 
 roles.harvester.stayInRoom = true;
-roles.harvester.buildRoad = function(creep) {
-  return !roles.harvester.checkBeforeStroage(creep);
-};
+roles.harvester.buildRoad = false;
 roles.harvester.boostActions = ['capacity'];
 
 roles.harvester.checkBeforeStroage = function(creep) {
@@ -51,7 +49,7 @@ roles.harvester.checkBeforeStroage = function(creep) {
 };
 
 roles.harvester.preMove = function(creep, directions) {
-  let resources = _.filter(creep.room.getDroppedResources(), Creep.pickableResources(creep));
+  let resources = creep.room.find(FIND_DROPPED_RESOURCES, { filter: Creep.pickableResources(creep) });
   if (resources.length > 0) {
     let resource = Game.getObjectById(resources[0].id);
     creep.pickup(resource);
