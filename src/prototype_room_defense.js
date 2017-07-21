@@ -79,22 +79,6 @@ Room.prototype.handleTower = function() {
     return false;
   }
 
-  // First heal
-  if (config.tower.healMyCreeps) {
-    const my_creeps = this.find(FIND_MY_CREEPS, {
-      filter: function(object) {
-        return object.hits < object.hitsMax;
-      }
-    });
-    if (my_creeps.length > 0) {
-      for (let tower of towers) {
-        tower.heal(my_creeps[0]);
-      }
-      return true;
-    }
-  }
-
-  // Secund attack
   const hostileCreeps = this.find(FIND_HOSTILE_CREEPS);
   if (hostileCreeps.length > 0) {
     let tower;
@@ -114,6 +98,22 @@ Room.prototype.handleTower = function() {
       hostileOffset[hostilesSorted[0].id] = 100;
     }
     return true;
+  }
+
+  if (config.tower.healMyCreeps) {
+    const my_creeps = _.sortBy(this.find(FIND_MY_CREEPS, {
+      filter: function(object) {
+        return object.hits < object.hitsMax;
+      }
+    }), function(object) {
+      return object.hits;
+    });
+    if (my_creeps.length > 0) {
+      for (let i in towers) {
+        towers[i].heal(my_creeps[i % my_creeps.length]);
+      }
+      return true;
+    }
   }
 
   if (this.controller.level < 4) {
@@ -155,21 +155,20 @@ Room.prototype.handleTower = function() {
     let to_repair = tower.pos.findClosestByRangePropertyFilter(FIND_STRUCTURES, 'structureType', [
       STRUCTURE_WALL, STRUCTURE_RAMPART,
       // TODO Let see if the creeps can keep the roads alive
-      STRUCTURE_ROAD
+      // STRUCTURE_ROAD
     ], true, { filter: repairable_structures });
-    // if (to_repair === null) {
-    //   to_repair = tower.pos.findClosestByRangePropertyFilter(FIND_STRUCTURES, 'structureType', [STRUCTURE_WALL, STRUCTURE_RAMPART], false, {
-    //     filter: repairable_blockers
-    //   });
-    // }
-    // if (to_repair === null) {
-    //   this.memory.repair_min += 10000;
-    //   this.log('Defense level: ' + this.memory.repair_min);
-    //   continue;
-    // }
+
     if (to_repair === null) {
-      this.memory.repair_min += 10000;
-      this.log('[tower] Defense level: ' + this.memory.repair_min);
+      to_repair = tower.pos.findClosestByRangePropertyFilter(FIND_STRUCTURES, 'structureType', [STRUCTURE_WALL, STRUCTURE_RAMPART], false, {
+        filter: repairable_blockers
+      });
+    }
+
+    if (to_repair === null) {
+      if (this.controller.level >= 8 || this.memory.repair_min < this.controller.level * 1000000) {
+        this.memory.repair_min += 10000;
+        this.log('Defense level: ' + this.memory.repair_min);
+      }
       break;
     }
     tower.repair(to_repair);
