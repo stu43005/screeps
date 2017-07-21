@@ -677,13 +677,10 @@ let callCleaner = function(creep) {
     return false;
   }
 
-  if (!creep.room.exectueEveryTicks(1000)) {
-    return false;
+  if (config.creep.structurer && creep.room.exectueEveryTicks(config.creep.structurerInterval)) {
+    return callStructurer(creep);
   }
-
-  if (config.creep.structurer) {
-    callStructurer(creep);
-  }
+  return false;
 };
 
 let checkSourcerMatch = function(sourcers, source_id) {
