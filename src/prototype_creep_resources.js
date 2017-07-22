@@ -181,8 +181,8 @@ Creep.prototype.handleUpgrader = function() {
     this.upgraderUpdateStats();
   }
 
-  if ((this.room.energyCapacityAvailable - this.room.energyAvailable + CARRY_CAPACITY < this.room.storage.store.energy &&
-      this.room.memory.queue.length === 0) || this.room.controller.ticksToDowngrade < 3000) {
+  if ((this.room.energyCapacityAvailable * this.room.memory.queue.length - this.room.energyAvailable + this.carryCapacity - this.carry.energy < this.room.storage.store.energy) ||
+    this.room.controller.ticksToDowngrade < 3000) {
     returnCode = this.withdraw(this.room.storage, RESOURCE_ENERGY);
     if (returnCode === ERR_FULL || returnCode === OK) {
       return true;
