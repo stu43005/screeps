@@ -421,6 +421,7 @@ Room.prototype.executeRoom = function() {
   this.handleNukeAttack();
   this.spawnCheckForCreate();
   this.handleMarket();
+  this.checkAndSpawnReserverForReservedRoom();
   brain.stats.addRoom(this.name, cpuUsed);
   return true;
 };
@@ -536,4 +537,36 @@ Room.prototype.reviveRoom = function() {
     this.reviveMyNow();
   }
   return true;
+};
+
+Room.prototype.checkAndSpawnReserverForReservedRoom = function() {
+  if (!this.memory.reserve) {
+    return false;
+  }
+  for (let roomName of this.memory.reserve) {
+    let roomMemory = Memory.rooms[roomName];
+    if (Game.rooms[roomName]) {
+      // In this case, spawn by handleReservedRoom method
+      continue;
+    }
+
+    if (roomMemory.lastChecked !== undefined &&
+      Game.time - roomMemory.lastChecked < 500) {
+      continue;
+    }
+    roomMemory.lastChecked = Game.time;
+
+    let reservation = roomMemory.reservation;
+    if (reservation === undefined) {
+      this.log('No reservation for ' + roomName);
+      this.memory.reserve = this.memory.reserve.splice(this.memory.reserve.indexOf(roomName), 1);
+      continue;
+    }
+
+    if (!reservation.controller) {
+      continue;
+    }
+
+    this.checkRoleToSpawn('reserver', 1, reservation.controller, roomName, 2);
+  }
 };

@@ -240,26 +240,13 @@ Room.prototype.checkAndSpawnReserver = function() {
     }
   }
 
-  let reserverSpawn = {
-    role: 'reserver',
-    level: 2,
-    routing: {
-      targetRoom: this.name,
-      targetId: this.controller.id,
-      reached: false,
-      routePos: 0,
-      pathPos: 0
-    }
-  };
   // TODO move the creep check from the reserver to here and spawn only sourcer (or one part reserver) when controller.level < 4
   let energyNeeded = 1300;
   if (baseRoom.misplacedSpawn) {
     energyNeeded += 300;
   }
   if (baseRoom.getEnergyCapacityAvailable() >= energyNeeded) {
-    if (!baseRoom.inQueue(reserverSpawn)) {
-      baseRoom.checkRoleToSpawn('reserver', 1, this.controller.id, this.name, 2);
-    }
+    baseRoom.checkRoleToSpawn('reserver', 1, this.controller.id, this.name, 2);
   }
 };
 
@@ -277,6 +264,15 @@ Room.prototype.handleReservedRoom = function() {
   });
   for (let idiotCreep of idiotCreeps) {
     brain.increaseIdiot(idiotCreep.owner.username);
+  }
+
+  if (!this.memory.reservation.controller) {
+    this.memory.reservation.controller = this.controller.id;
+  }
+  let baseRoomMemory = Memory.rooms[this.memory.reservation.base];
+  baseRoomMemory.reserve = baseRoomMemory.reserve || [];
+  if (baseRoomMemory.reserve.indexOf(this.name) === -1) {
+    baseRoomMemory.reserve.push(this.name);
   }
 
   let reservers = this.findPropertyFilter(FIND_MY_CREEPS, 'memory.role', ['reserver']);
@@ -339,8 +335,14 @@ Room.prototype.handleUnreservedRoom = function() {
         if (reservedRooms.length < numRooms[room.controller.level]) {
           this.memory.reservation = {
             base: room.name,
+            controller: this.controller.id
           };
           this.memory.state = 'Reserved';
+
+          room.memory.reserve = room.memory.reserve || [];
+          if (room.memory.reserve.indexOf(this.name) === -1) {
+            room.memory.reserve.push(this.name);
+          }
           break;
         }
       }
