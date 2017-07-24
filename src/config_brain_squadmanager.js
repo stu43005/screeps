@@ -49,7 +49,7 @@ brain.increaseIdiot = function(name, value) {
   value = value || 1;
   Memory.players = Memory.players || {};
 
-  brain.initPlayer();
+  brain.initPlayer(name);
 
   if (!Memory.players[name].idiot) {
     Memory.players[name].idiot = 0;
