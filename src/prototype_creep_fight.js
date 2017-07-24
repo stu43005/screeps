@@ -22,8 +22,8 @@ Creep.prototype.fleeFromHostile = function(hostile) {
   for (let offset = 0, dir, pos; offset < 8; offset++) {
     let dir = (direction + offset) % 8 + 1;
     let pos = this.pos.getAdjacentPosition(dir);
-    if (pos.lookFor(LOOK_TERRAIN)[0] !== STRUCTURE_WALL && pos.lookFor(LOOK_CREEPS).length === 0) {
-      direction = direction + offset;
+    if (!pos.checkForWall() && pos.lookFor(LOOK_CREEPS).length === 0) {
+      direction = (direction + offset) % 8 + 1;
       break;
     }
   }
