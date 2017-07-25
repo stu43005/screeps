@@ -462,7 +462,16 @@ Creep.prototype.getEnergyFromSource = function() {
     swarm = true;
     swarmSourcesFilter = source => source.pos.hasNonObstacleAdjacentPosition() || this.pos.isNearTo(source);
   }
-  let source = this.pos.getClosestSource(swarmSourcesFilter);
+  let source;
+  if (this.memory.source) {
+    source = Game.getObjectById(this.memory.source);
+    if (source === null || source.energy === 0) {
+      source = this.pos.getClosestSource(swarmSourcesFilter);
+    }
+  } else {
+    source = this.pos.getClosestSource(swarmSourcesFilter);
+  }
+  this.memory.source = source.id;
   let range = this.pos.getRangeTo(source);
   if (this.carry.energy > 0 && range > 1) {
     this.memory.hasEnergy = true; // Stop looking and spend the energy.
@@ -503,19 +512,15 @@ Creep.prototype.getEnergy = function() {
   if (this.memory.hasEnergy) {
     return false;
   }
-
   if (this.getDroppedEnergy()) {
     return true;
   }
-
   if (this.getEnergyFromStorage()) {
     return true;
   }
-
   if (this.getEnergyFromHostileStructures()) {
     return true;
   }
-
   return this.getEnergyFromSource();
 };
 
