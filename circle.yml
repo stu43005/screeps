@@ -8,7 +8,3 @@ deployment:
     commands:
       - npm run deploy
       - npm publish || true
-  workspace:
-    branch: workspace
-    commands:
-      - npm run deploy
