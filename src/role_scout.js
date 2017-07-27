@@ -118,10 +118,8 @@ roles.scout.execute = function(creep) {
       return false;
     }
 
-    if (search.incomplete) {
-      creep.moveRandom();
-      creep.memory.scoutSkip = true;
-      delete creep.memory.last; // Delete to reset stuckness.
+    if (creep.pos.roomName !== creep.memory.last.pos3.roomName) {
+      creep.moveTo(creep.room.controller.pos);
       return true;
     }
 
