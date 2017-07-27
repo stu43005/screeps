@@ -36,19 +36,29 @@ roles.scout.execute = function(creep) {
       }
       return false;
     };
+    let setNewLevel = function(creep) {
+      creep.memory.search.levels.push([]);
+      for (let room of creep.memory.search.levels[creep.memory.search.level]) {
+        let rooms = Game.map.describeExits(room);
+        for (let direction in rooms) {
+          let roomNext = rooms[direction];
+          if (haveNotSeen(creep, roomNext) && Game.map.isRoomAvailable(roomNext)) {
+            creep.memory.search.levels[creep.memory.search.level + 1].push(roomNext);
+            creep.memory.search.target = roomNext;
+          }
+        }
+      }
+      creep.memory.search.level++;
+    };
+
     if (!creep.memory.search) {
       creep.memory.search = {};
       creep.memory.search.seen = [creep.room.name];
-      creep.memory.search.level = 1;
+      creep.memory.search.level = 0;
       creep.memory.search.levels = [
-        [creep.room.name],
-        []
+        [creep.room.name]
       ];
-      let rooms = Game.map.describeExits(creep.room.name);
-      for (let direction in rooms) {
-        creep.memory.search.levels[1].push(rooms[direction]);
-        creep.memory.search.target = rooms[direction];
-      }
+      setNewLevel(creep);
     }
 
     if (creep.memory.scoutSkip || creep.room.name === creep.memory.search.target) {
@@ -59,18 +69,10 @@ roles.scout.execute = function(creep) {
         creep.memory.search.seen.push(creep.room.name);
       }
       if (!setNewTarget(creep)) {
-        creep.memory.search.levels.push([]);
-        for (let room of creep.memory.search.levels[creep.memory.search.level]) {
-          let rooms = Game.map.describeExits(room);
-          for (let direction in rooms) {
-            let roomNext = rooms[direction];
-            if (haveNotSeen(creep, roomNext)) {
-              creep.memory.search.levels[creep.memory.search.level + 1].push(roomNext);
-              creep.memory.search.target = roomNext;
-            }
-          }
+        setNewLevel(creep);
+        if (creep.memory.search.levels[creep.memory.search.level].length == 0) {
+          delete creep.memory.search.target;
         }
-        creep.memory.search.level++;
       }
     }
 
