@@ -60,8 +60,17 @@ global.config = {
 
   tower: {
     healMyCreeps: false,
-    repairStructures: false
+    repairStructures: false,
+    defenseRCL: {
+      3: 100000,
+      4: 316227,
+      5: 1000000,
+      6: 3162277,
+      7: 10000000,
+      8: Infinity,
+    }
   },
+
   autoattack: {
     disabled: false,
     notify: false,

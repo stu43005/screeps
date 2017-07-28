@@ -165,8 +165,8 @@ Room.prototype.handleTower = function() {
     }
 
     if (to_repair === null) {
-      if (this.controller.level >= 8 || this.memory.repair_min < this.controller.level * 1000000) {
-        this.memory.repair_min += 10000;
+      if (this.memory.repair_min < config.tower.defenseRCL[this.controller.level]) {
+        this.memory.repair_min = Math.min(this.memory.repair_min + 10000, config.tower.defenseRCL[this.controller.level]);
         this.log('Defense level: ' + this.memory.repair_min);
       }
       break;
