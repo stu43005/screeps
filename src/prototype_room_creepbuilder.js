@@ -356,10 +356,7 @@ Room.prototype.getCreepConfig = function(creep) {
   var id = Math.floor((Math.random() * 1000) + 1);
   var name = role + '-' + id;
   var partConfig = this.getPartConfig(creep);
-  if (!partConfig) {
-    this.log('Can not get part config: ' + role + ' ' + JSON.stringify(creep));
-    return;
-  }
+  if (!partConfig) { return; }
   let memory = {
     role: role,
     number: id,
