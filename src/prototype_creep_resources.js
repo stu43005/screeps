@@ -29,13 +29,7 @@ Creep.prototype.harvesterBeforeStorage = function() {
   return true;
 };
 
-Creep.prototype.checkEnergyTransfer = function(otherCreep) {
-  // TODO duplicate from role_carry, extract to method
-  let offset = 0;
-  if (otherCreep) {
-    offset = otherCreep.carry.energy;
-  }
-
+Creep.prototype.checkEnergyTransfer = function(offset = 0) {
   // define minimum carryPercentage to move back to storage
   let carryPercentage = config.carry.carryPercentageHighway;
   if (this.room.name === this.memory.routing.targetRoom) {
@@ -56,7 +50,7 @@ Creep.prototype.findCreepWhichCanTransfer = function(creeps) {
     }
 
     if (Game.creeps[otherCreep.name].memory.role === 'carry') {
-      return this.checkEnergyTransfer(otherCreep);
+      return this.checkEnergyTransfer(otherCreep.carry.energy);
     }
     continue;
   }
@@ -95,14 +89,14 @@ Creep.prototype.pickupWhileMoving = function(reverse) {
   if (resources.length > 0) {
     let resource = resources[0];
     const amount = this.pickupOrWithdrawFromSourcer(resource);
-    return _.sum(this.carry) + amount > 0.5 * this.carryCapacity;
+    return this.checkEnergyTransfer(amount);
   }
 
   if (this.room.name === this.memory.routing.targetRoom) {
     const containers = this.pos.findInRangePropertyFilter(FIND_STRUCTURES, 1, 'structureType', [STRUCTURE_CONTAINER, STRUCTURE_STORAGE]);
     if (containers.length > 0) {
       this.withdraw(containers[0], RESOURCE_ENERGY);
-      return containers[0].store.energy > 9;
+      return this.checkEnergyTransfer(containers[0].store.energy);
     }
   }
   return reverse;
