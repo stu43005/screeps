@@ -116,7 +116,7 @@ Room.prototype.handleTower = function() {
     }
   }
 
-  if (this.controller.level < 4) {
+  if (this.controller.level < 4 || this.memory.misplacedSpawn) {
     return false;
   }
 
