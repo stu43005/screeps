@@ -598,7 +598,7 @@ Creep.prototype.construct = function() {
 
 Creep.prototype.getTransferTarget = function() {
   const structure = this.pos.findClosestByRangePropertyFilter(FIND_MY_STRUCTURES, 'structureType', [STRUCTURE_EXTENSION, STRUCTURE_SPAWN, STRUCTURE_TOWER], false, {
-    filter: structure => structure.energy < structure.energyCapacity
+    filter: structure => structure.structureType !== STRUCTURE_TOWER && structure.energy < structure.energyCapacity || structure.energy < 0.5 * structure.energyCapacity
   });
   if (structure === null) {
     if (this.room.storage && this.room.storage.my && this.memory.role !== 'planer') {
