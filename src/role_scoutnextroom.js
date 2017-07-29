@@ -26,12 +26,43 @@ roles.scoutnextroom.execute = function(creep) {
     return true;
   }
 
-  if (!creep.memory.target || creep.memory.target === null || creep.memory.target.roomName != creep.room.name) {
+  if (!creep.memory.target || creep.memory.target === null || creep.memory.target.roomName == creep.room.name) {
+    if (Memory.next_room) {
+      if (creep.memory.target.roomName == creep.room.name) {
+        creep.memory.claimRoom = true;
+        creep.moveTo(creep.room.controller.pos);
+        creep.log('claim');
+        return true;
+      }
+
+      let route = creep.room.findRoute(creep.room.name, Memory.next_room);
+      let exit_pos = creep.pos.findClosestByPath(route[0].exit, {
+        ignoreCreeps: true
+      });
+      if (!exit_pos) {
+        return false;
+      }
+
+      let search = PathFinder.search(
+        creep.pos,
+        exit_pos, {
+          maxRooms: 1
+        });
+      if (search.incomplete) {
+        return false;
+      }
+
+      creep.memory.target = exit_pos;
+      creep.memory.goalRoom = Memory.next_room;
+      return true;
+    }
+
     let hostileCreeps = creep.room.getEnemys();
 
     let opponentRoom = hostileCreeps.length > 0;
     if (!creep.inBase()) {
       opponentRoom = opponentRoom || (creep.room.controller && creep.room.controller.my);
+      opponentRoom = opponentRoom || (creep.room.controller.reservation && creep.room.controller.reservation.username === Memory.username);
 
       // TODO No way to controller doesn't mean it is an opponentRoom
       //      if (creep.room.controller) {
@@ -59,7 +90,6 @@ roles.scoutnextroom.execute = function(creep) {
         return false;
       }
 
-      var targets = [];
       if (!creep.room.controller) {
         creep.log('No controller');
         return false;
