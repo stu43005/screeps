@@ -17,17 +17,14 @@ roles.reserver.settings = {
   maxLayoutAmout: 1,
 };
 roles.reserver.updateSettings = function(room, creep) {
+  let partsData = room.getPartsStringDatas(roles.reserver.settings.layoutString);
   let level = creep.level ? creep.level : 1;
-  if (level === 2) {
-    return {
-      amount: [2, 2]
-    };
-  }
-  if (level === 5) {
-    room.log('Build super reserver');
-    return {
-      amount: [5, 5]
-    };
+  for (var l = level; l > 0; l--) {
+    if (room.energyCapacityAvailable > partsData.cost * l) {
+      return {
+        amount: [l, l]
+      };
+    }
   }
 };
 
