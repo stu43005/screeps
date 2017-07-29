@@ -112,6 +112,9 @@ Room.prototype.externalHandleHighwayRoom = function() {
     return;
   }
 
+  if (!Memory.powerBanks) {
+    Memory.powerBanks = {};
+  }
   if (structures[0].ticksToDecay < 3000) {
     Memory.powerBanks[this.name] = {
       target: null
@@ -134,9 +137,6 @@ Room.prototype.externalHandleHighwayRoom = function() {
       }
     }
 
-    if (!Memory.powerBanks) {
-      Memory.powerBanks = {};
-    }
     if (target !== null) {
       Memory.powerBanks[this.name] = {
         target: target.name,
