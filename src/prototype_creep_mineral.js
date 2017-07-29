@@ -199,6 +199,10 @@ Creep.prototype.handleMineralCreep = function() {
     let labEmpty = object => !object.mineralType || object.mineralType === null;
 
     for (mineral in room.memory.boosting) {
+      if (Object.keys(room.memory.boosting[mineral]).length === 0) {
+        delete room.memory.boosting[mineral];
+        continue;
+      }
       let labs = room.findPropertyFilter(FIND_STRUCTURES, 'structureType', [STRUCTURE_LAB], false, { filter: labForMineral });
       if (labs.length > 0) {
         if (labs[0].mineralAmount === labs[0].mineralsCapacity) {
@@ -235,6 +239,7 @@ Creep.prototype.handleMineralCreep = function() {
 
     let lab = Game.getObjectById(creep.memory.boostAction.lab);
     if (!lab) {
+      delete creep.memory.boostAction;
       return false;
     }
     if (lab.energy < lab.energyCapacity) {
@@ -469,62 +474,94 @@ Creep.prototype.handleMineralCreep = function() {
   execute(this);
 };
 
-Creep.prototype.boost = function() {
-  if (!this.room.terminal || !this.room.terminal.my) {
-    this.memory.boosted = true;
-    return false;
+Creep.prototype.getBoostMinerals = function() {
+  if (this.memory.boosts) {
+    return this.memory.boosts;
   }
 
   let unit = roles[this.memory.role];
   if (!unit.boostActions) {
-    return false;
+    return [];
   }
 
   let parts = {};
   for (let part of this.body) {
     if (part.boost) {
-      return false;
+      continue;
     }
     parts[part.type] = true;
   }
 
-  let boost;
-  let findLabs = lab => lab.mineralType === boost && lab.mineralAmount > 30 && lab.energy > 20;
-  // TODO boosting disabled, too many room.finds
-  if (true) {
-    return false;
-  }
+  let boosts = [];
   for (let part in parts) {
-    for (boost in BOOSTS[part]) {
+    for (let boost in BOOSTS[part]) {
       for (let action in BOOSTS[part][boost]) {
-        this.log('boost: ' + part + ' ' + boost + ' ' + action);
         if (unit.boostActions.indexOf(action) > -1) {
-          const labs = this.room.findPropertyFilter(FIND_STRUCTURES, 'structureType', [STRUCTURE_LAB], false, { filter: findLabs });
-          if (this.room.terminal.store[boost] || labs.length > 0) {
-            //            this.log('Could boost with: ' + part + ' ' + boost + ' ' + action + ' terminal: ' + this.room.terminal.store[boost] + ' lab: ' + JSON.stringify(labs));
-            let room = Game.rooms[this.room.name];
-            room.memory.boosting = room.memory.boosting || {};
-            room.memory.boosting[boost] = room.memory.boosting[boost] || {};
-            room.memory.boosting[boost][this.id] = true;
-
-            if (labs.length > 0) {
-              let returnCode = this.moveToMy(labs[0].pos, 1);
-              returnCode = labs[0].boostCreep(this);
-              if (returnCode === OK) {
-                let room = Game.rooms[this.room.name];
-                delete room.memory.boosting[boost][this.id];
-              }
-              if (returnCode === ERR_NOT_IN_RANGE) {
-                return true;
-              }
-              this.log('Boost returnCode: ' + returnCode + ' lab: ' + labs[0].pos);
-              return true;
-            }
-
-            return false;
-          }
+          this.log('boost: ' + part + ' ' + boost + ' ' + action);
+          boosts.push(boost);
         }
       }
+    }
+  }
+  this.memory.boosts = boosts;
+  return this.memory.boosts;
+};
+
+Creep.prototype.boost = function() {
+  if (!this.room.terminal || !this.room.terminal.my) {
+    return false;
+  }
+
+  let boosts = this.getBoostMinerals();
+  if (!boosts || boosts.length === 0) {
+    return false;
+  }
+
+  if (this.memory.boosting) {
+    let lab = Game.getObjectById(this.memory.boosting.lab);
+    if (!lab) {
+      delete this.memory.boosting;
+      return false;
+    }
+    if (this.pos.getRangeTo(lab.pos) > 1) {
+      let returnCode = this.moveToMy(lab.pos, 1);
+    } else {
+      let returnCode = lab.boostCreep(this);
+      if (returnCode === OK) {
+        delete this.room.memory.boosting[this.memory.boosting.boost][this.id];
+        delete this.memory.boosts;
+        delete this.memory.boosting;
+        this.memory.boosted = true;
+      }
+      this.log('Boost returnCode: ' + returnCode + ' lab: ' + lab.pos);
+      this.say('br:' + returnCode);
+    }
+    return true;
+  }
+
+  let allLabs = this.room.findPropertyFilter(FIND_STRUCTURES, 'structureType', [STRUCTURE_LAB], false, {
+    filter: lab => lab.mineralAmount > 30 && lab.energy > 20
+  });
+
+  let filterLabType = boost => lab => lab.mineralType === boost;
+
+  for (let boost of boosts) {
+    let labs = allLabs.filter(filterLabType(boost));
+    if (this.room.terminal.store[boost] || labs.length > 0) {
+      //            this.log('Could boost with: ' + part + ' ' + boost + ' ' + action + ' terminal: ' + this.room.terminal.store[boost] + ' lab: ' + JSON.stringify(labs));
+      this.room.memory.boosting = this.room.memory.boosting || {};
+      this.room.memory.boosting[boost] = this.room.memory.boosting[boost] || {};
+      this.room.memory.boosting[boost][this.id] = true;
+
+      if (labs.length > 0) {
+        this.memory.boosting = {
+          lab: labs[0].id,
+          boost
+        };
+        return true;
+      }
+
+      return false;
     }
   }
 

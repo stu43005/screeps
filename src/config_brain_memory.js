@@ -112,15 +112,28 @@ brain.cleanRooms = function() {
     for (let name in Memory.rooms) {
       // Check for reserved rooms
       let memory = Memory.rooms[name];
-      if (!Memory.rooms[name].lastSeen) {
+      if (!memory.lastSeen) {
         console.log('Deleting ' + name + ' from memory no `last_seen` value');
         delete Memory.rooms[name];
         continue;
       }
-      if (Memory.rooms[name].lastSeen < Game.time - config.room.lastSeenThreshold) {
+      if (memory.lastSeen < Game.time - config.room.lastSeenThreshold) {
         console.log(`Deleting ${name} from memory older than ${config.room.lastSeenThreshold}`);
         delete Memory.rooms[name];
         continue;
+      }
+      if (memory.boosting) {
+        for (let boost in memory.boosting) {
+          for (let id in memory.boosting[boost]) {
+            let creep = Game.getObjectById(id);
+            if (!creep) {
+              delete memory.boosting[boost][id];
+            }
+          }
+          if (Object.keys(memory.boosting[boost]).length === 0) {
+            delete memory.boosting[boost];
+          }
+        }
       }
     }
   }
