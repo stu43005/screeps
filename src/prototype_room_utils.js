@@ -161,6 +161,59 @@ Room.stringToPath = function(string) {
   return path;
 };
 
+Room.prototype.reserveRoom = function(targetRoom) {
+  var controllerId;
+  if (Game.rooms[targetRoom]) {
+    controllerId = Game.rooms[targetRoom].controller.id;
+  }
+  if (Memory.rooms[targetRoom].reservation) {
+    controllerId = Memory.rooms[targetRoom].reservation.controller;
+  } else {
+    Memory.rooms[targetRoom].reservation = {
+      base: this.name,
+      controller: controllerId
+    };
+  }
+  this.memory.reserve = this.memory.reserve || [];
+  if (this.memory.reserve.indexOf(targetRoom) === -1) {
+    this.memory.reserve.push(targetRoom);
+  }
+  this.checkRoleToSpawn('reserver', 1, controllerId, targetRoom, 2);
+};
+
+Room.prototype.unreserveRoom = function(targetRoom) {
+  let room = Game.rooms[targetRoom];
+  if (room) {
+    room.clearRoom();
+  }
+
+  let memory = Memory.rooms[targetRoom];
+  delete memory.reservation;
+  delete memory.state;
+
+  if (this.memory.reserve.indexOf(targetRoom) > -1) {
+    this.memory.reserve.splice(this.memory.reserve.indexOf(targetRoom), 1);
+  }
+
+  for (let i = this.memory.queue.length - 1; i >= 0; i--) {
+    let creep = this.memory.queue[i];
+    if (creep.routing && creep.routing.targetRoom === targetRoom) {
+      this.memory.queue.splice(i, 1);
+    }
+  }
+
+  let route = this.findRoute(this.name, targetRoom);
+  route.splice(0, 0, {
+    room: this.name
+  });
+  _.each(route, r => {
+    if (Game.rooms[r.room]) {
+      let creeps = Game.rooms[r.room].findPropertyFilter(FIND_MY_CREEPS, 'memory.routing.targetRoom', [targetRoom]);
+      _.each(creeps, cs => cs.suicide());
+    }
+  });
+};
+
 Room.test = function() {
   let original = Memory.rooms.E37N35.routing['pathStart-harvester'].path;
   let string = Room.pathToString(original);
