@@ -63,15 +63,11 @@ Creep.prototype.checkForTransfer = function(direction) {
   }
 
   let adjacentPos = this.pos.getAdjacentPosition(direction);
-
-  if (adjacentPos.x < 0 || adjacentPos.y < 0) {
-    return false;
-  }
-  if (adjacentPos.x > 49 || adjacentPos.y > 49) {
+  if (!adjacentPos.isValid()) {
     return false;
   }
 
-  let creeps = adjacentPos.lookFor('creep');
+  let creeps = adjacentPos.lookFor(LOOK_CREEPS);
   return this.findCreepWhichCanTransfer(creeps);
 };
 
@@ -154,7 +150,7 @@ Creep.prototype.upgraderUpdateStats = function() {
   }
   var work_parts = 0;
   for (var part_i in this.body) {
-    if (this.body[part_i].type === 'work') {
+    if (this.body[part_i].type === WORK) {
       work_parts++;
     }
   }
@@ -312,7 +308,7 @@ Creep.prototype.transferToCreep = function(direction) {
       if (config.debug.resources) {
         this.log('transfer to ' + otherCreep.name);
       }
-      return this.carry.energy * 0.5 <= otherCreep.carryCapacity - otherCreep.carry.energy;
+      return !this.checkEnergyTransfer(otherCreep.carry.energy - otherCreep.carryCapacity);
     }
   }
   return false;
