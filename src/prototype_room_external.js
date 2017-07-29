@@ -266,6 +266,10 @@ Room.prototype.handleReservedRoom = function() {
     brain.increaseIdiot(idiotCreep.owner.username);
   }
 
+  if (this.memory.reservation === undefined) {
+    this.memory.state = 'Unreserved';
+    return false;
+  }
   if (!this.memory.reservation.controller) {
     this.memory.reservation.controller = this.controller.id;
   }
