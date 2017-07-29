@@ -283,6 +283,11 @@ Room.prototype.handleReservedRoom = function() {
   if (reservers.length === 0) {
     this.checkAndSpawnReserver();
   }
+
+  let hostiles = this.getEnemys();
+  if (hostiles.length > 0) {
+    Game.rooms[this.memory.reservation.base].checkRoleToSpawn('defender', 1, undefined, this.name);
+  }
   return false;
 };
 

@@ -700,14 +700,8 @@ let checkSourcer = function(creep) {
 Creep.prototype.callDefender = function() {
   var hostiles = this.room.getEnemys();
   if (hostiles.length > 0) {
-    //this.log('Reserver under attack');
     if (!this.memory.defender_called) {
-      Game.rooms[this.memory.base].memory.queue.push({
-        role: 'defender',
-        routing: {
-          targetRoom: this.room.name
-        }
-      });
+      Game.rooms[this.memory.base].checkRoleToSpawn('defender', 1, undefined, this.room.name);
       this.memory.defender_called = true;
     }
   }
