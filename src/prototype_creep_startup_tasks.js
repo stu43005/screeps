@@ -331,7 +331,7 @@ Creep.prototype.getDroppedEnergy = function() {
       this.pickupOrWithdrawFromSourcer(target);
       return true;
     }
-    if (target.energy > (energyRange * 10) * (this.carry.energy + 1)) {
+    if (target.energy - energyRange > 0) {
       return this.moveToMy(target.pos, 1) !== false;
     }
   }
