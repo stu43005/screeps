@@ -464,6 +464,7 @@ Room.prototype.setup = function() {
   delete this.memory.constants;
   this.log('costmatrix.setup called');
   this.memory.controllerLevel = {};
+  this.memory.routing = {};
   this.updatePosition();
 
   let paths_controller = _.filter(this.getMemoryPaths(), function(object, key) {
@@ -471,7 +472,14 @@ Room.prototype.setup = function() {
   });
   let paths_sorted = _.sortBy(paths_controller, sorter);
   let path = this.getMemoryPath(paths_sorted[paths_sorted.length - 1].name);
-  let pathLB = this.getMemoryPath(paths_controller[4].name);
+  let minerals = this.find(FIND_MINERALS);
+  let mineralPath = _.filter(paths_controller, path => path.name === 'pathStart-' + minerals[0].id);
+  if (mineralPath.length > 0) {
+    mineralPath = mineralPath[0];
+  } else {
+    mineralPath = paths_controller[4];
+  }
+  let pathLB = this.getMemoryPath(mineralPath.name);
   let pathL = this.setLabsTerminal(pathLB);
   let pathI = this.setStructures(path);
   this.log('path: ' + paths_sorted[paths_sorted.length - 1].name + ' pathI: ' + pathI + ' length: ' + path.length);
