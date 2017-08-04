@@ -128,13 +128,15 @@ Room.prototype.inRoom = function(creepMemory, amount = 1) {
  * @param  {string} targetRoom the targeted room name (base)
  * @param  {number} level      the level of creeps. required by some functions.
  * @param  {string} base       the room which will spawn creep
+ * @param  {object} additionalMemory
  * @return {boolean}           if the spawn is not allow, it will return false.
  */
-Room.prototype.checkRoleToSpawn = function(role, amount, targetId, targetRoom, level, base) {
+Room.prototype.checkRoleToSpawn = function(role, amount, targetId, targetRoom, level, base, additionalMemory = {}) {
   if (typeof targetId == 'object' && targetId.id) {
     targetId = targetId.id;
   }
-  var creepMemory = this.creepMem(role, targetId, targetRoom, level, base);
+  const creepMemory = this.creepMem(role, targetId, targetRoom, level, base);
+  Object.assign(creepMemory, additionalMemory);
   if (this.inQueue(creepMemory) || this.inRoom(creepMemory, amount)) { return false; }
 
   if (config.debug.queue) {
@@ -353,7 +355,7 @@ Room.prototype.getCreepConfig = function(creep) {
     this.log('Can not find role: ' + role + ' creep_' + role);
     return false;
   }
-  var id = Math.floor((Math.random() * 1000) + 1);
+  var id = Math.floor((Math.random() * 10000) + 1);
   var name = role + '-' + id;
   var partConfig = this.getPartConfig(creep);
   if (!partConfig) { return; }
@@ -395,7 +397,7 @@ Room.prototype.spawnCreateCreep = function(creep) {
   for (let spawn of spawns) {
     let returnCode = spawn.createCreep(creepConfig.partConfig, creepConfig.name, creepConfig.memory);
     if (returnCode != creepConfig.name) {
-      this.log(`spawnCreateCreep: ${returnCode}`);
+      this.log(`spawnCreateCreep: ${returnCode} ${creepConfig.name}`);
       continue;
     }
     brain.stats.modifyRoleAmount(creep.role, 1);
@@ -413,7 +415,7 @@ Room.prototype.checkAndSpawnSourcer = function() {
   for (source of sources) {
     let sourcers = this.findPropertyFilter(FIND_MY_CREEPS, 'memory.role', ['sourcer'], false, { filter: isSourcer });
     if (sourcers.length === 0) {
-      // this.log('spawn sourcer for: ' + source.id);
+      //      this.log(source.id);
       this.checkRoleToSpawn('sourcer', 1, source.id, this.name);
     }
   }

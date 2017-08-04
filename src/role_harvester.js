@@ -27,7 +27,7 @@ roles.harvester.settings = {
       400: [1, 1, 1]
     }
   },
-  maxLayoutAmount: 6,
+  maxLayoutAmount: 6
 };
 roles.harvester.updateSettings = function(room, creep) {
   if (room.storage && room.storage.store.energy > config.creep.energyFromStorageThreshold) {
@@ -45,7 +45,7 @@ roles.harvester.buildRoad = false;
 roles.harvester.boostActions = ['capacity'];
 
 roles.harvester.checkBeforeStroage = function(creep) {
-  return !creep.room.storage || (creep.room.storage.store.energy + creep.carry.energy) < config.creep.energyFromStorageThreshold;
+  return !creep.room.storage || creep.room.memory.misplacedSpawn || (creep.room.storage.store.energy + creep.carry.energy) < config.creep.energyFromStorageThreshold;
 };
 
 roles.harvester.preMove = function(creep, directions) {
@@ -89,22 +89,16 @@ roles.harvester.preMove = function(creep, directions) {
     }
   }
 
-  if (!reverse && creep.room.memory.misplacedSpawn) {
-    if (creep.transferEnergyMy()) {
-      creep.memory.routing.reached = true;
-      return true;
-    }
-  }
-
-  // TODO Decide between, transfered no more energy (reverse), transferred other structures to transfer available (stay still), transferred no more structures (forward)
   let transferred = creep.transferToStructures();
-  if (!reverse && transferred) {
-    if (transferred.moreStructures) {
+  if (transferred) {
+    if (transferred.transferred >= _.sum(creep.carry)) {
       reverse = true;
-      return true;
+    } else {
+      if (transferred.moreStructures) {
+        return true;
+      }
     }
   }
-
   creep.memory.routing.reverse = reverse || !creep.memory.move_forward_direction;
   if (directions && creep.memory.routing.reverse) {
     directions.direction = directions.backwardDirection;

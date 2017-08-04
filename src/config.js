@@ -146,6 +146,7 @@ global.config = {
       1800: [8, 15], // RCL 5
       2300: [11, 21], // RCL 6
     },
+    minSpawnRate: 50,
     // Percentage should increase from base to target room. Decrease may cause stack on border
     carryPercentageBase: 0.1,
     carryPercentageHighway: 0.2,
@@ -192,16 +193,17 @@ global.config = {
 
   layout: {
     plainCost: 5,
-    swampCost: 5,
+    swampCost: 8,
     borderAvoid: 20,
     skLairAvoidRadius: 5,
     skLairAvoid: 30,
     wallAvoid: 10,
+    sourceAvoid: 20,
     pathAvoid: 1,
     structureAvoid: 0xFF,
     creepAvoid: 0xFF,
     wallThickness: 1,
-    version: 18,
+    version: 19,
   },
 
   terminal: {
@@ -210,7 +212,7 @@ global.config = {
   },
 
   mineral: {
-    enabled: false,
+    enabled: true,
     storage: 100000,
     minAmount: 5000,
     minAmountForMarket: 100000,

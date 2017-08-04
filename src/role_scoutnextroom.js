@@ -18,6 +18,7 @@ roles.scoutnextroom.execute = function(creep) {
   creep.notifyWhenAttacked(false);
   if (creep.memory.claimRoom) {
     creep.moveTo(creep.room.controller);
+    creep.log('claim');
     let returnCode = creep.claimController(creep.room.controller);
     if (returnCode === OK) {
       delete Memory.next_room;

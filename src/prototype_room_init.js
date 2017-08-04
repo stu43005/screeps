@@ -472,6 +472,7 @@ Room.prototype.setup = function() {
   });
   let paths_sorted = _.sortBy(paths_controller, sorter);
   let path = this.getMemoryPath(paths_sorted[paths_sorted.length - 1].name);
+
   let minerals = this.find(FIND_MINERALS);
   let mineralPath = _.filter(paths_controller, path => path.name === 'pathStart-' + minerals[0].id);
   if (mineralPath.length > 0) {

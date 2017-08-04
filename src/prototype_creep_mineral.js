@@ -1,43 +1,47 @@
 'use strict';
 
-Creep.prototype.checkStorageMinerals = function() {
-  let resourceInStorage = false;
+Creep.prototype.transferAllMineralsToTerminal = function() {
+  this.moveToMy(this.room.terminal.pos);
+  for (let transfer of Object.keys(this.carry)) {
+    let resource = this.transfer(this.room.terminal, transfer);
+  }
+};
+
+Creep.prototype.withdrawAllMineralsFromStorage = function() {
+  this.moveToMy(this.room.storage.pos);
   for (let resource in this.room.storage.store) {
-    if (resource === 'energy' || resource === 'power') {
+    if (resource === RESOURCE_ENERGY || resource === RESOURCE_POWER) {
       continue;
     }
-    resourceInStorage = true;
-    break;
+    this.withdraw(this.room.storage, resource);
   }
+};
 
-  if (!resourceInStorage) {
+Creep.prototype.checkStorageMinerals = function() {
+  if (!this.room.isMineralInStorage()) {
     return false;
   }
   this.say('checkStorage');
 
   if (_.sum(this.carry) > 0) {
-    this.moveToMy(this.room.terminal.pos);
-
-    for (let transfer in this.carry) {
-      let resource = this.transfer(this.room.terminal, transfer);
-    }
+    this.transferAllMineralsToTerminal();
     return true;
   }
-  this.moveToMy(this.room.storage.pos);
-  for (let resource in this.room.storage.store) {
-    if (resource === 'energy' || resource === 'power') {
-      continue;
-    }
-    this.withdraw(this.room.storage, resource);
-  }
+
+  this.withdrawAllMineralsFromStorage();
   return true;
 };
 
-Creep.prototype.checkTerminalEnergy = function() {
-  if (this.room.storage.store.energy + _.sum(this.carry) < config.terminal.storageMinEnergyAmount) {
-    return false;
+Creep.prototype.checkEnergyThreshold = function(structure, value, below = false) {
+  if (below) {
+    return this.room[structure].store.energy + _.sum(this.carry) < value;
   }
-  if (this.room.terminal.store.energy + _.sum(this.carry) > config.terminal.energyAmount) {
+  return this.room[structure].store.energy + _.sum(this.carry) > value;
+};
+
+Creep.prototype.checkTerminalEnergy = function() {
+  if (this.checkEnergyThreshold(STRUCTURE_STORAGE, config.terminal.storageMinEnergyAmount, true) ||
+    this.checkEnergyThreshold(STRUCTURE_TERMINAL, config.terminal.energyAmount)) {
     return false;
   }
 
@@ -45,7 +49,7 @@ Creep.prototype.checkTerminalEnergy = function() {
 
   if (_.sum(this.carry) > 0) {
     this.moveToMy(this.room.terminal.pos);
-    for (let resource in this.carry) {
+    for (let resource of Object.keys(this.carry)) {
       this.transfer(this.room.terminal, resource);
     }
     return true;

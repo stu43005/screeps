@@ -229,7 +229,9 @@ Creep.prototype.moveByPathMy = function(route, routePos, start, target, skipPreM
         range: 0
       }, {
         roomCallback: this.room.getCostMatrixCallback(posFirst, true),
-        maxRooms: 1
+        maxRooms: 1,
+        swampCost: config.layout.swampCost,
+        plainCost: config.layout.plainCost
       }
     );
 
