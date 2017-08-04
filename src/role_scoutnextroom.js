@@ -26,9 +26,9 @@ roles.scoutnextroom.execute = function(creep) {
     return true;
   }
 
-  if (!creep.memory.target || creep.memory.target === null || creep.memory.target.roomName == creep.room.name) {
+  if (!creep.memory.target || creep.memory.target === null || creep.memory.target.roomName != creep.room.name) {
     if (Memory.next_room) {
-      if (creep.memory.target.roomName == creep.room.name) {
+      if (Memory.next_room == creep.room.name) {
         creep.memory.claimRoom = true;
         creep.moveTo(creep.room.controller.pos);
         creep.log('claim');
@@ -54,6 +54,7 @@ roles.scoutnextroom.execute = function(creep) {
 
       creep.memory.target = exit_pos;
       creep.memory.goalRoom = Memory.next_room;
+      creep.moveTo(25, 25);
       return true;
     }
 
