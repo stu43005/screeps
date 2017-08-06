@@ -8,6 +8,7 @@
  */
 
 roles.atkeepermelee = {};
+roles.atkeepermelee.boostActions = ['fatigue', 'attack', 'heal', 'damage'];
 roles.atkeepermelee.settings = {
   layoutString: 'MAH',
   amount: [25, 19, 6],

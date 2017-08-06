@@ -7,6 +7,7 @@
  */
 
 roles.powerdefender = {};
+roles.powerdefender.boostActions = ['rangedAttack', 'damage'];
 
 roles.powerdefender.settings = {
   layoutString: 'MR',

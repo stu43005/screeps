@@ -7,7 +7,7 @@
  */
 
 roles.defender = {};
-roles.defender.boostActions = ['rangedAttack', 'heal'];
+roles.defender.boostActions = ['fatigue', 'rangedAttack', 'heal', 'damage'];
 
 roles.defender.settings = {
   param: ['controller.level'],

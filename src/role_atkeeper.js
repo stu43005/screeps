@@ -8,6 +8,7 @@
  */
 
 roles.atkeeper = {};
+roles.atkeeper.boostActions = ['fatigue', 'rangedAttack', 'heal', 'damage'];
 
 roles.atkeeper.settings = {
   layoutString: 'MRH',

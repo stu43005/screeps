@@ -19,7 +19,7 @@ roles.repairer.settings = {
   //if (room.storage) {datas.maxEnergyUsed = (room.storage.store.energy / 10000) * 250;}
 };
 
-roles.repairer.boostActions = ['repair'];
+roles.repairer.boostActions = ['fatigue', 'repair', 'capacity'];
 
 // TODO needs to be enabled again, repair overwrites target
 //module.exports.action = function(creep) {

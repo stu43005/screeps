@@ -7,6 +7,7 @@
  */
 
 roles.squadsiege = {};
+roles.squadsiege.boostActions = ['fatigue', 'dismantle', 'damage'];
 
 roles.squadsiege.settings = {
   layoutString: 'MW',

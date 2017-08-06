@@ -7,6 +7,7 @@
  */
 
 roles.powertransporter = {};
+roles.powertransporter.boostActions = ['capacity', 'damage'];
 roles.powertransporter.settings = {
   layoutString: 'MC',
   maxLayoutAmount: 20,

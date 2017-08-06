@@ -7,6 +7,7 @@
  */
 
 roles.powerattacker = {};
+roles.powerattacker.boostActions = ['attack', 'damage'];
 roles.powerattacker.settings = {
   layoutString: 'MA',
   amount: [5, 5],

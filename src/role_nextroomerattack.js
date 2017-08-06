@@ -7,6 +7,7 @@
  */
 
 roles.nextroomerattack = {};
+roles.nextroomerattack.boostActions = ['fatigue', 'attack', 'capacity', 'damage'];
 
 roles.nextroomerattack.settings = {
   layoutString: 'MA',

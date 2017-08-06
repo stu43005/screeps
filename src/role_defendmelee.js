@@ -7,6 +7,7 @@
  */
 
 roles.defendmelee = {};
+roles.defendmelee.boostActions = ['fatigue', 'attack', 'damage'];
 
 roles.defendmelee.settings = {
   layoutString: 'MA',

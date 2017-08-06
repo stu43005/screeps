@@ -7,6 +7,7 @@
  */
 
 roles.powerhealer = {};
+roles.powerdefender.boostActions = ['heal', 'damage'];
 
 roles.powerhealer.settings = {
   layoutString: 'MH',

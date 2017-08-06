@@ -7,6 +7,7 @@
  */
 
 roles.squadheal = {};
+roles.squadheal.boostActions = ['fatigue', 'heal', 'damage'];
 
 roles.squadheal.settings = {
   layoutString: 'MH',

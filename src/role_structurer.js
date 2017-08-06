@@ -9,7 +9,7 @@
  */
 
 roles.structurer = {};
-roles.structurer.boostActions = ['dismantle'];
+roles.structurer.boostActions = ['fatigue', 'dismantle'];
 
 roles.structurer.settings = {
   layoutString: 'MW',

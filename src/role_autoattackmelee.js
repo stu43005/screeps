@@ -7,6 +7,7 @@
  */
 
 roles.autoattackmelee = {};
+roles.autoattackmelee.boostActions = ['fatigue', 'attack', 'damage'];
 
 roles.autoattackmelee.settings = {
   layoutString: 'MA',

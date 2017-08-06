@@ -7,6 +7,7 @@
  */
 
 roles.defendranged = {};
+roles.defendranged.boostActions = ['fatigue', 'rangedAttack', 'damage'];
 
 roles.defendranged.settings = {
   layoutString: 'MR',

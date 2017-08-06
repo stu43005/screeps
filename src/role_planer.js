@@ -9,6 +9,7 @@
 
 roles.planer = {};
 roles.planer.stayInRoom = true;
+roles.planer.boostActions = ['fatigue', 'build', 'capacity'];
 
 roles.planer.settings = {
   layoutString: 'MCW',

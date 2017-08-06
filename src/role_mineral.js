@@ -9,6 +9,7 @@
  */
 
 roles.mineral = {};
+roles.mineral.boostActions = ['capacity'];
 roles.mineral.settings = {
   layoutString: 'MC',
   amount: [2, 2],

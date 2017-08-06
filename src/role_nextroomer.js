@@ -11,6 +11,7 @@
  */
 
 roles.nextroomer = {};
+roles.nextroomer.boostActions = ['fatigue', 'upgradeController', 'capacity'];
 
 roles.nextroomer.died = function(name, creepMemory) {
   if (!creepMemory || !creepMemory.routing || !creepMemory.routing.route || !creepMemory.routing.routePos) {
