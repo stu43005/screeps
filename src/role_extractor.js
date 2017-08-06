@@ -24,7 +24,13 @@ roles.extractor.terminalStorageExchange = function(creep) {
   }
   var energyInTerminal = terminal.store.energy / terminal.storeCapacity;
   var totalInTerminal = _.sum(terminal.store) / terminal.storeCapacity;
-  if ((energyInTerminal < 0.5) && (totalInTerminal !== 1)) {
+
+  var action = {
+    withdraw: creep.carry.energy / creep.carryCapacity < 0.8,
+    transfer: creep.carry.energy / creep.carryCapacity > 0.3
+  };
+
+  if (!action.transfer && (energyInTerminal < 0.5) && (totalInTerminal !== 1)) {
     return ERR_NOT_ENOUGH_RESOURCES;
   }
 
@@ -34,22 +40,26 @@ roles.extractor.terminalStorageExchange = function(creep) {
   // transferToStructures then decide go to terminal or storage
   creep.transferToStructures();
 
-  var action = {
-    withdraw: _.sum(creep.carry) / creep.carryCapacity < 0.8,
-    transfer: _.sum(creep.carry) / creep.carryCapacity > 0.3
-  };
-
   // TODO replace creep.moveTo by moving on path ?
 
   if (action.withdraw) {
+    for (let key in creep.carry) {
+      if (key === RESOURCE_ENERGY) {
+        continue;
+      }
+      if (creep.carry[key] === 0) {
+        continue;
+      }
+      creep.transfer(terminal, key);
+    }
     if (creep.withdraw(terminal, RESOURCE_ENERGY) !== OK) {
-      creep.moveTo(terminal);
+      creep.moveToMy(terminal.pos);
     }
   }
 
   if (!action.withdraw || action.transfer) {
     if (creep.transfer(creep.room.storage, RESOURCE_ENERGY) !== OK) {
-      creep.moveTo(creep.room.storage);
+      creep.moveToMy(creep.room.storage.pos);
     }
   }
   if (!action.withdraw && !action.transfer) {

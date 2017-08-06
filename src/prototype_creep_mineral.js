@@ -503,7 +503,7 @@ Creep.prototype.getBoostMinerals = function() {
     for (let boost in BOOSTS[part]) {
       for (let action in BOOSTS[part][boost]) {
         if (unit.boostActions.indexOf(action) > -1) {
-          this.log('boost: ' + part + ' ' + boost + ' ' + action);
+          // this.log('boost: ' + part + ' ' + boost + ' ' + action);
           boosts.push(boost);
         }
       }

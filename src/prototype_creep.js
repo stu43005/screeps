@@ -23,18 +23,23 @@ Creep.prototype.mySignController = function() {
     }
 
     let returnCode = this.signController(this.room.controller, text);
-    this.log(returnCode);
+    if (returnCode !== OK) {
+      this.log('sign controller: ' + returnCode);
+    }
   }
 };
 
 Creep.prototype.moveToMy = function(target, range) {
   range = range || 1;
+  if (!target.roomName && !target.x && !target.y && target.pos) {
+    target = target.pos;
+  }
   let search = PathFinder.search(
     this.pos, {
       pos: target,
       range: range
     }, {
-      roomCallback: this.room.getCostMatrixCallback(target, true, this.pos.roomName === (target.pos || target).roomName),
+      roomCallback: this.room.getCostMatrixCallback(target, true, this.pos.roomName === target.roomName),
       maxRooms: 0,
       swampCost: config.layout.swampCost,
       plainCost: config.layout.plainCost

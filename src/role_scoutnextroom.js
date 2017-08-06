@@ -64,7 +64,7 @@ roles.scoutnextroom.execute = function(creep) {
     let opponentRoom = hostileCreeps.length > 0;
     if (!creep.inBase()) {
       opponentRoom = opponentRoom || (creep.room.controller && creep.room.controller.my);
-      opponentRoom = opponentRoom || (creep.room.controller.reservation && creep.room.controller.reservation.username === Memory.username);
+      opponentRoom = opponentRoom || (creep.room.controller && creep.room.controller.reservation && creep.room.controller.reservation.username === Memory.username);
 
       // TODO No way to controller doesn't mean it is an opponentRoom
       //      if (creep.room.controller) {

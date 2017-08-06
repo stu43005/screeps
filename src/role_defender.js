@@ -19,6 +19,10 @@ roles.defender.settings = {
 };
 
 roles.defender.action = function(creep) {
+  if (creep.memory.routing.targetRoom != creep.room.name) {
+    creep.memory.routing.reached = false;
+    return false;
+  }
   if (creep.inBase() && creep.memory.reverse) {
     return Creep.recycleCreep(creep);
   }
@@ -33,11 +37,6 @@ roles.defender.action = function(creep) {
   }
 
   creep.heal(creep);
-  var room = Game.rooms[creep.room.name];
-  if (room.memory.hostile) {
-    creep.handleDefender();
-    return true;
-  }
 
   creep.handleDefender();
   return true;

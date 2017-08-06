@@ -237,7 +237,7 @@ roles.nextroomer.settle = function(creep) {
   methods.push(Creep.transferEnergy);
 
   let structures = creep.room.findPropertyFilter(FIND_MY_CONSTRUCTION_SITES, 'structureType', [STRUCTURE_RAMPART, STRUCTURE_CONTROLLER], true);
-  if (creep.room.controller.level <= 3 && structures.length > 0) {
+  if (structures.length > 0) {
     methods.push(Creep.constructTask);
   }
 

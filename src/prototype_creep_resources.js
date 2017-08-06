@@ -722,7 +722,7 @@ Creep.prototype.interactWithControllerSuccess = function() {
 
 Creep.prototype.interactWithController = function() {
   var return_code;
-  if (this.room.controller.owner && this.room.controller.owner !== Memory.username) {
+  if (this.room.controller.owner && this.room.controller.owner.username !== Memory.username) {
     this.say('attack');
     return_code = this.attackController(this.room.controller);
   } else {

@@ -41,7 +41,9 @@ roles.harvester.updateSettings = function(room, creep) {
 };
 
 roles.harvester.stayInRoom = true;
-roles.harvester.buildRoad = false;
+roles.harvester.buildRoad = function(creep) {
+  return !roles.harvester.checkBeforeStroage(creep);
+};
 roles.harvester.boostActions = ['capacity'];
 
 roles.harvester.checkBeforeStroage = function(creep) {

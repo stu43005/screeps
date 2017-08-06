@@ -109,10 +109,10 @@ Room.prototype.setFillerArea = function(storagePos, route) {
 
 Room.prototype.updatePosition = function() {
   this.checkCache();
-  delete this.memory.routing;
 
   let costMatrixBase = this.getCostMatrix();
   this.setMemoryCostMatrix(costMatrixBase);
+  this.memory.routing = {};
   this.memory.position = {
     creep: {}
   };
@@ -464,7 +464,6 @@ Room.prototype.setup = function() {
   delete this.memory.constants;
   this.log('costmatrix.setup called');
   this.memory.controllerLevel = {};
-  this.memory.routing = {};
   this.updatePosition();
 
   let paths_controller = _.filter(this.getMemoryPaths(), function(object, key) {
