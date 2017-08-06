@@ -210,7 +210,7 @@ Room.prototype.getSettings = function(creep) {
       return setting;
     }
     for (let parameter of param) {
-      if (_.isString(setting) || _.isNumber(setting) || _.isArray(setting)) {
+      if (_.isString(setting) || _.isNumber(setting) || _.isArray(setting) || _.isBoolean(setting)) {
         break;
       }
       let valueForI = _.get(this, parameter, 1);
@@ -265,6 +265,9 @@ Room.prototype.applyAmount = function(input, amount) {
  */
 Room.prototype.sortParts = function(parts, layout) {
   return _.sortBy(parts, function(p) {
+    if (p === TOUGH) {
+      return 0;
+    }
     let order = _.indexOf(layout.parts, p) + 1;
     if (order) {
       return order;
@@ -288,6 +291,7 @@ Room.prototype.getPartConfig = function(creep) {
     amount,
     maxLayoutAmount,
     sufixString,
+    fillTough,
   } = this.getSettings(creep);
   let maxBodyLength = MAX_CREEP_SIZE;
   if (prefixString) { maxBodyLength -= prefixString.length; }
@@ -304,6 +308,7 @@ Room.prototype.getPartConfig = function(creep) {
   if (config.debug.getPartsConfLogs) {
     this.log('[getPartConfig] prefix data: ' + JSON.stringify(prefix));
   }
+  let parts = prefix.parts || [];
   energyAvailable -= prefix.cost || 0;
 
   // layout
@@ -318,7 +323,6 @@ Room.prototype.getPartConfig = function(creep) {
   if (config.debug.getPartsConfLogs) {
     this.log('[getPartConfig] layout data: ' + JSON.stringify(layout));
   }
-  let parts = prefix.parts || [];
   let maxRepeat = Math.floor(Math.min(energyAvailable / layout.cost, maxBodyLength / layout.len));
   if (maxLayoutAmount) {
     maxRepeat = Math.min(maxLayoutAmount, maxRepeat);
@@ -336,7 +340,17 @@ Room.prototype.getPartConfig = function(creep) {
       this.log('[getPartConfig] sufix data: ' + JSON.stringify(sufix));
     }
     parts = parts.concat(sufix.parts);
+    energyAvailable -= sufix.cost || 0;
   }
+
+  if (fillTough && parts.length < MAX_CREEP_SIZE) {
+    let tough = this.getPartsStringDatas('T', energyAvailable);
+    if (!tough.fail && !tough.null) {
+      let maxTough = Math.floor(Math.min(energyAvailable / tough.cost, MAX_CREEP_SIZE - parts.length));
+      parts = _.flatten(Array(maxTough).fill(tough.parts)).concat(parts);
+    }
+  }
+
   if (config.debug.spawn) {
     this.log('Spawning ' + creep.role + ' - - - Body: ' + JSON.stringify(prefix.parts) + ' - ' + maxRepeat + ' * ' + JSON.stringify(layout.parts) + ' - ' + JSON.stringify(sufix.parts));
   }

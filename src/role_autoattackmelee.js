@@ -11,7 +11,7 @@ roles.autoattackmelee = {};
 roles.autoattackmelee.settings = {
   layoutString: 'MA',
   amount: [5, 5],
-
+  fillTough: true
 };
 
 roles.autoattackmelee.died = function(name, memory) {

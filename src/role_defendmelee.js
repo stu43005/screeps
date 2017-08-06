@@ -11,6 +11,7 @@ roles.defendmelee = {};
 roles.defendmelee.settings = {
   layoutString: 'MA',
   amount: [5, 5],
+  fillTough: true
 };
 
 roles.defendmelee.execute = function(creep) {

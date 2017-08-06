@@ -10,6 +10,7 @@ roles.defendranged = {};
 
 roles.defendranged.settings = {
   layoutString: 'MR',
+  fillTough: true
 };
 
 // TODO This overwrites the target so redo and enable again
