@@ -30,12 +30,16 @@ roles.harvester.settings = {
   maxLayoutAmount: 6
 };
 roles.harvester.updateSettings = function(room, creep) {
-  if (room.storage && room.storage.store.energy > config.creep.energyFromStorageThreshold) {
+  if (room.storage && room.storage.my && room.storage.store.energy > config.creep.energyFromStorageThreshold) {
     return {
       prefixString: 'WMC',
       layoutString: 'MC',
       amount: [1, 1],
       maxLayoutAmount: 12
+    };
+  } else if (room.storage && !room.storage.my) {
+    return {
+      maxLayoutAmount: 999
     };
   }
 };
@@ -47,7 +51,7 @@ roles.harvester.buildRoad = function(creep) {
 roles.harvester.boostActions = ['capacity'];
 
 roles.harvester.checkBeforeStroage = function(creep) {
-  return !creep.room.storage || creep.room.memory.misplacedSpawn || (creep.room.storage.store.energy + creep.carry.energy) < config.creep.energyFromStorageThreshold;
+  return !creep.room.storage || !creep.room.storage.my || creep.room.memory.misplacedSpawn || (creep.room.storage.store.energy + creep.carry.energy) < config.creep.energyFromStorageThreshold;
 };
 
 roles.harvester.preMove = function(creep, directions) {
