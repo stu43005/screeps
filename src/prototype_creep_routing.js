@@ -89,16 +89,6 @@ Creep.prototype.getPathPos = function(route, routePos, path) {
 };
 
 Creep.prototype.getDirections = function(path, pathPos) {
-  let flee = false;
-  if (this.room.name != this.memory.base && Room.isRoomUnderAttack(this.room.name)) {
-    this.say('flee');
-    delete this.memory.routing.reached;
-    // TODO flee disabled 2016-01-15
-    flee = false;
-  }
-
-  // TODO handle if next room is under attack
-
   let pos = path[pathPos];
   if (!pos) {
     console.log('newmove: getDirections: pathPos: ' + pathPos + ' path: ' + JSON.stringify(path));
@@ -119,7 +109,7 @@ Creep.prototype.getDirections = function(path, pathPos) {
   }
 
   let offset = 1;
-  if (flee || this.memory.routing.reverse) {
+  if (this.memory.routing.reverse) {
     offset = -1;
     if (pathPos - 1 < 0) {
       return {

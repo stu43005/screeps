@@ -179,8 +179,6 @@ Creep.prototype.fightRampart = function(target) {
     return true;
   }
 
-  this.log('creep_fight.fightRampart returnCode: ' + returnCode);
-
   const targets = this.pos.findInRange(FIND_HOSTILE_CREEPS, 3, {
     filter: this.room.findAttackCreeps
   });
