@@ -285,6 +285,8 @@ Room.prototype.executeRoom = function() {
     if (hostiles.length > 0) {
       this.controller.activateSafeMode();
     }
+  } else if (this.find(FIND_MY_CREEPS).length < 3) {
+    this.reviveRoom();
   } else {
     this.memory.active = true;
   }
@@ -355,8 +357,12 @@ Room.prototype.executeRoom = function() {
       if (this.memory.attackTimer > 300) {
         role = 'defendmelee';
       }
-      if (this.exectueEveryTicks(250)) {
+      if (this.exectueEveryTicks(100)) {
         this.checkRoleToSpawn(role, 1, undefined, this.name, 1, this.name);
+        // call otherRoom to defend
+        this.memory.wayBlocked = true;
+        this.reviveMyNow();
+        this.memory.wayBlocked = false;
       }
     }
 
@@ -518,7 +524,8 @@ Room.prototype.reviveRoom = function() {
   if (this.controller.level >= config.nextRoom.boostToControllerLevel &&
     this.controller.ticksToDowngrade >
     (CONTROLLER_DOWNGRADE[this.controller.level] * config.nextRoom.minDowngradPercent / 100) &&
-    this.energyCapacityAvailable > config.nextRoom.minEnergyForActive) {
+    this.energyCapacityAvailable > config.nextRoom.minEnergyForActive &&
+    this.find(FIND_MY_CREEPS).length > 2) {
     this.memory.active = true;
     return false;
   } else if (this.controller.level > 1 && nextRoomers >= config.nextRoom.numberOfNextroomers) {
