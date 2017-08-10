@@ -270,7 +270,7 @@ Creep.prototype.moveByPathMy = function(route, routePos, start, target, skipPreM
   }
 
   // build roads
-  if (this.checkBuildRoad()) {
+  if (unit.buildRoad) {
     const target = Game.getObjectById(this.memory.routing.targetId);
     if (config.buildRoad.buildToOtherMyRoom || !target || target.structureType !== STRUCTURE_STORAGE) {
       this.buildRoad();

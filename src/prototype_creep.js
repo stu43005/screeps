@@ -58,14 +58,6 @@ Creep.prototype.inBase = function() {
   return this.room.name === this.memory.base;
 };
 
-Creep.prototype.checkBuildRoad = function() {
-  let unit = roles[this.memory.role];
-  if (typeof unit.buildRoad == 'function') {
-    return unit.buildRoad(this);
-  }
-  return unit.buildRoad;
-};
-
 Creep.prototype.handle = function() {
   if (this.spawning) {
     return;

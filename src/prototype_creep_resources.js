@@ -464,7 +464,7 @@ Creep.prototype.moveToSource = function(source, swarm = false) {
   if (swarm && this.pos.inRangeTo(source, 3)) {
     // should not be `moveToMy` unless it will start to handle creeps
     this.moveTo(source.pos);
-  } else if (this.room.memory.misplacedSpawn || this.room.controller.level < 3) {
+  } else if (this.room.memory.misplacedSpawn || this.room.controller.level < 2) {
     // TODO should be `moveToMy`, but that hangs in W5N1 spawn (10,9)
     this.moveTo(source.pos);
   } else {
@@ -490,6 +490,19 @@ Creep.prototype.harvestSource = function(source) {
   return true;
 };
 
+Creep.prototype.getSourceToHarvest = function(swarmSourcesFilter) {
+  let source;
+  if (this.memory.source) {
+    source = Game.getObjectById(this.memory.source);
+    if (source === null || source.energy === 0) {
+      source = this.pos.getClosestSource(swarmSourcesFilter);
+    }
+  } else {
+    source = this.pos.getClosestSource(swarmSourcesFilter);
+  }
+  return source;
+};
+
 Creep.prototype.getEnergyFromSource = function() {
   let swarm = false;
   let swarmSourcesFilter;
@@ -497,7 +510,9 @@ Creep.prototype.getEnergyFromSource = function() {
     swarm = true;
     swarmSourcesFilter = source => source.pos.hasNonObstacleAdjacentPosition() || this.pos.isNearTo(source);
   }
-  let source = this.pos.getClosestSource(swarmSourcesFilter);
+  let source = this.getSourceToHarvest(swarmSourcesFilter);
+
+  this.memory.source = source.id;
   let range = this.pos.getRangeTo(source);
   if (this.carry.energy > 0 && range > 1) {
     this.memory.hasEnergy = true; // Stop looking and spend the energy.
@@ -538,19 +553,15 @@ Creep.prototype.getEnergy = function() {
   if (this.memory.hasEnergy) {
     return false;
   }
-
   if (this.getDroppedEnergy()) {
     return true;
   }
-
   if (this.getEnergyFromStorage()) {
     return true;
   }
-
   if (this.getEnergyFromHostileStructures()) {
     return true;
   }
-
   return this.getEnergyFromSource();
 };
 
