@@ -15,7 +15,7 @@ roles.powerattacker.settings = {
 };
 
 roles.powerattacker.action = function(creep) {
-  let hostileCreep = creep.pos.findClosestEnemy();
+  let hostileCreep = creep.findClosestEnemy();
   if (hostileCreep !== null) {
     creep.moveTo(hostileCreep);
     creep.attack(hostileCreep);
