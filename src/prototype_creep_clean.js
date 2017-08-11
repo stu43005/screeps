@@ -8,7 +8,7 @@ Creep.prototype.handleStructurer = function() {
   }
 
   structure = Game.getObjectById(this.memory.routing.targetId);
-  if (structure === null) {
+  if (structure === null || structure.structureType === STRUCTURE_CONTROLLER) {
     delete this.memory.routing.targetId;
     return;
   }
