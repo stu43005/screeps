@@ -49,7 +49,7 @@ Creep.prototype.findCreepWhichCanTransfer = function(creeps) {
       continue;
     }
 
-    if (Game.creeps[otherCreep.name].memory.role === 'carry') {
+    if (otherCreep.memory.role === 'carry' && otherCreep.memory.base === this.memory.base) {
       return this.checkEnergyTransfer(otherCreep.carry.energy);
     }
     continue;
