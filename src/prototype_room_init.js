@@ -134,7 +134,6 @@ Room.prototype.updatePosition = function() {
   this.initSetSources();
   this.initSetMinerals();
 
-  let exits = Game.map.describeExits(this.name);
   if (this.controller && this.controller.my) {
     let startPos = this.initSetStorageAndPathStart();
 
@@ -159,12 +158,7 @@ Room.prototype.updatePosition = function() {
       this.setMemoryCostMatrix(costMatrix);
     }
     this.setFillerArea(startPos.storagePos, startPos.route);
-
-    this.costMatrixSetMineralPath();
-    this.costMatrixPathFromStartToExit(exits);
   }
-
-  this.costMatrixPathCrossings(exits);
 };
 
 Room.prototype.setPosition = function(type, pos, value, positionType = 'structure') {
@@ -465,6 +459,13 @@ Room.prototype.setup = function() {
   this.log('costmatrix.setup called');
   this.memory.controllerLevel = {};
   this.updatePosition();
+
+  let exits = Game.map.describeExits(this.name);
+  if (this.controller && this.controller.my) {
+    this.costMatrixSetMineralPath();
+    this.costMatrixPathFromStartToExit(exits);
+  }
+  this.costMatrixPathCrossings(exits);
 
   let paths_controller = _.filter(this.getMemoryPaths(), function(object, key) {
     return key.startsWith('pathStart-');
