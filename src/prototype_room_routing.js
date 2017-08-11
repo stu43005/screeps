@@ -38,12 +38,16 @@ Room.prototype.getCreepPositionForId = function(to) {
   this.memory.position = this.memory.position || {
     creep: {}
   };
-  this.memory.position.creep[to] = target.pos.findNearPosition().next().value;
+  if (target.structureType === STRUCTURE_STORAGE) {
+    this.memory.position.creep[to] = this.memory.position.creep.pathStart;
+  } else {
+    this.memory.position.creep[to] = target.pos.findNearPosition().next().value;
+  }
 
   let pos = this.memory.position.creep[to];
   if (!pos) {
     //this.log('getCreepPositionForId no pos in memory take pos of target: ' + to);
-    pos = Game.getObjectById(to).pos;
+    pos = target.pos;
   }
   return new RoomPosition(pos.x, pos.y, this.name);
 };
