@@ -553,6 +553,17 @@ Creep.prototype.getEnergy = function() {
   if (this.memory.hasEnergy) {
     return false;
   }
+  if (this.room.storage && _.sum(this.carry) === this.carryCapacity && this.carry.energy !== this.carryCapacity) {
+    this.moveToMy(this.room.storage.pos);
+    for (let transfer of Object.keys(this.carry)) {
+      if (transfer === RESOURCE_ENERGY) {
+        continue;
+      }
+      this.transfer(this.room.storage, transfer);
+    }
+    return true;
+  }
+
   if (this.getDroppedEnergy()) {
     return true;
   }
