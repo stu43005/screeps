@@ -39,6 +39,16 @@ roles.structurer.preMove = function(creep, directions) {
         creep.say('dismantle');
         break;
       }
+      if (creep.isStuck()) {
+        let creeps = posForward.lookFor(LOOK_CREEPS);
+        for (let otherCreep of creeps) {
+          if (otherCreep.memory.role === 'structurer') {
+            creep.moveRandom();
+            creep.say('stuck');
+            break;
+          }
+        }
+      }
     }
   }
 

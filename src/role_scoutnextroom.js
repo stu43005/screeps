@@ -14,15 +14,27 @@ roles.scoutnextroom.settings = {
   maxLayoutAmount: 1
 };
 
+roles.scoutnextroom.callStructurer = function(creep) {
+  const resource_structures = creep.room.findPropertyFilter(FIND_STRUCTURES, 'structureType', [STRUCTURE_CONTROLLER, STRUCTURE_ROAD, STRUCTURE_CONTAINER], true);
+  if (resource_structures.length > 0 && !creep.room.controller.my) {
+    creep.log('Call structurer from ' + creep.memory.base + ' because of ' + resource_structures[0].structureType);
+    Game.rooms[creep.memory.base].checkRoleToSpawn('structurer', 1, creep.room.controller.id, creep.room.name);
+    return true;
+  }
+};
+
 roles.scoutnextroom.execute = function(creep) {
   creep.notifyWhenAttacked(false);
   if (creep.memory.claimRoom) {
     creep.moveTo(creep.room.controller);
-    creep.log('claim');
+    creep.say('claim');
     let returnCode = creep.claimController(creep.room.controller);
     if (returnCode === OK) {
       delete Memory.next_room;
       creep.suicide();
+    }
+    if (config.creep.structurer && creep.room.exectueEveryTicks(config.creep.structurerInterval)) {
+      roles.scoutnextroom.callStructurer(creep);
     }
     return true;
   }
@@ -31,7 +43,7 @@ roles.scoutnextroom.execute = function(creep) {
     if (Memory.next_room) {
       if (Memory.next_room == creep.room.name) {
         creep.memory.claimRoom = true;
-        creep.moveTo(creep.room.controller.pos);
+        creep.moveTo(25, 25);
         creep.log('claim');
         return true;
       }
