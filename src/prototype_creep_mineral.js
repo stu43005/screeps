@@ -371,6 +371,11 @@ Creep.prototype.handleMineralCreep = function() {
       return true;
     }
 
+    if (creep.isStuck() && creep.pos.inPath()) {
+      creep.moveRandom();
+      return true;
+    }
+
     if (creep.checkTerminalEnergy()) {
       return true;
     }
