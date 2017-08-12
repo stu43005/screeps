@@ -122,14 +122,14 @@ Room.prototype.inRoom = function(creepMemory, amount = 1) {
 /**
  * First function call for ask a creep spawn. Add it in queue after check if spawn is allow.
  *
- * @param  {string} role       the role of the creeps to spawn.
- * @param  {number} amount     the amount of creeps asked for (1).
- * @param  {string} targetId   the id of targeted object by creeps (null).
- * @param  {string} targetRoom the targeted room name (base)
- * @param  {number} level      the level of creeps. required by some functions.
- * @param  {string} base       the room which will spawn creep
- * @param  {object} additionalMemory
- * @return {boolean}           if the spawn is not allow, it will return false.
+ * @param  {string} role                the role of the creeps to spawn.
+ * @param  {number} [amount]            the amount of creeps asked for (1).
+ * @param  {string} [targetId]          the id of targeted object by creeps (null).
+ * @param  {string} [targetRoom]        the targeted room name (base)
+ * @param  {number} [level]             the level of creeps. required by some functions.
+ * @param  {string} [base]              the room which will spawn creep
+ * @param  {object} [additionalMemory]  add this object to creep memory
+ * @return {boolean}                    if the spawn is not allow, it will return false.
  */
 Room.prototype.checkRoleToSpawn = function(role, amount, targetId, targetRoom, level, base, additionalMemory = {}) {
   if (typeof targetId == 'object' && targetId.id) {
@@ -159,9 +159,16 @@ Room.prototype.checkRoleToSpawn = function(role, amount, targetId, targetRoom, l
  */
 
 Room.prototype.getPartsStringDatas = function(parts, energyAvailable) {
-  if (!_.isString(parts) || parts === '') {
+  if (!_.isString(parts)) {
     return {
       null: true
+    };
+  }
+  if (parts === '') {
+    return {
+      cost: 0,
+      parts: [],
+      len: 0,
     };
   }
   let ret = {};
@@ -241,7 +248,7 @@ Room.prototype.applyAmount = function(input, amount) {
   if (!input) {
     return '';
   }
-  if (!amount) {
+  if (typeof amount === undefined) {
     return input;
   }
   let cost = 0;
@@ -324,10 +331,15 @@ Room.prototype.getPartConfig = function(creep) {
     this.log('[getPartConfig] layout data: ' + JSON.stringify(layout));
   }
   let maxRepeat = Math.floor(Math.min(energyAvailable / layout.cost, maxBodyLength / layout.len));
+  if (layout.len === 0) {
+    maxRepeat = 0;
+  }
   if (maxLayoutAmount) {
     maxRepeat = Math.min(maxLayoutAmount, maxRepeat);
   }
-  parts = parts.concat(_.flatten(Array(maxRepeat).fill(layout.parts)));
+  if (maxRepeat > 0) {
+    parts = parts.concat(_.flatten(Array(maxRepeat).fill(layout.parts)));
+  }
   energyAvailable -= layout.cost * maxRepeat;
 
   // sufix

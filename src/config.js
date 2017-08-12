@@ -22,11 +22,13 @@ global.config = {
     enabled: false,
     showRoomPaths: true,
     showCreepPaths: true,
+    showPathSearches: true,
     showStructures: true,
     showCreeps: true,
     showRoomInfo: true,
     showCreepsInfo: true,
-    refresh: true,
+    showBlockers: true,
+    showCostMatrixes: false
   },
 
   quests: {
@@ -187,6 +189,7 @@ global.config = {
     scoutSkipWhenStuck: true, // Useful for novice areas.
     scout: true, // TODO somehow broken ?? Is it broken ??
     upgraderMinStorage: 0,
+    upgraderStorageFactor: 2,
     lastSeenThreshold: 1000000,
     notify: false,
   },

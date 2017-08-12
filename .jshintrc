@@ -139,6 +139,7 @@
     "OBSTACLE_OBJECT_TYPES": false,
     "CARRY_CAPACITY": false,
     "HARVEST_POWER": false,
+    "RoomVisual": false,
     "LOOK_RESOURCES": false
   },
   "node": true

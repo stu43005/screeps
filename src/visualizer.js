@@ -1,216 +1,186 @@
 'use strict';
 
 if (config.visualizer.enabled) {
-  try {
-    var Visual = require('visual');
-  } catch (e) {
-    console.log('Visual not found, please disable config option or copy visual.js from screeps-visual');
-    config.visualizer.enabled = false;
-  }
-}
-if (config.visualizer.enabled) {
   global.visualizer = {
-    // Draws path types configured in config.visualizer
-    showPaths: function() {
-      let colors = [];
-      let COLOR_BLACK = colors.push('#000000') - 1;
-      let COLOR_RED = colors.push('rgba(255,0,0,0.5)') - 1;
-      let COLOR_BLUE = colors.push('rgba(0,0,255,0.1)') - 1;
-      let COLOR_YELLOW = colors.push('rgba(255,255,0,0.1)') - 1;
-      let COLOR_WHITE = colors.push('rgba(255,255,255,0.5)') - 1;
-      _.each(Game.rooms, (room, name) => {
-        let visual = new Visual(name);
-        visual.defineColors(colors);
-        visual.setLineWidth = 0.5;
-        visual.font = '1px sans';
-        // draw fixed paths in room
-        if (config.visualizer.showRoomPaths) {
-          let paths = room.getMemoryPaths();
-          if (paths.length !== 0) {
-            _.each(paths, route => {
-              visual.drawLine(route.path.map(p => ([p.x, p.y])), COLOR_WHITE, {
-                lineWidth: 0.1
+
+    drawPosition(rv, position, text, color) {
+      rv.text(text, position.x, position.y + 0.2, {
+        color: color,
+        font: 0.7,
+        opacity: 0.5
+      });
+    },
+
+    drawPath(rv, path, color) {
+      if (path.length) {
+        rv.poly(path.map(p => [p.x, p.y]), {
+          stroke: color,
+          strokeWidth: 0.1,
+          opacity: 0.5
+        });
+      }
+    },
+
+    /**
+     * draw fixed paths in room
+     */
+    showRoomPaths() {
+      for (let room of _.values(Game.rooms)) {
+        const rv = room.visual;
+        let paths = room.getMemoryPaths();
+        for (let route of _.values(paths)) {
+          this.drawPath(rv, route.path, 'white');
+        }
+      }
+    },
+
+    /**
+     * draw creep paths from using moveTo
+     */
+    showCreepPaths() {
+      for (let creep of _.values(Game.creeps)) {
+        const rv = creep.room.visual;
+        if (creep.memory._move) {
+          let path = Room.deserializePath(creep.memory._move.path);
+          this.drawPath(rv, path, 'red');
+        }
+      }
+    },
+
+    /**
+     * draw structures
+     */
+    showStructures() {
+      for (let room of _.values(Game.rooms)) {
+        const rv = room.visual;
+        if (room.memory.position && room.memory.position.structure) {
+          let structures = room.memory.position.structure;
+          for (let structType of Object.keys(structures)) {
+            let text = structType.substr(0, 1).toUpperCase() + structType.substr(1, 1);
+            for (let structure of structures[structType]) {
+              this.drawPosition(rv, structure, text, 'blue');
+            }
+          }
+        }
+      }
+    },
+
+    showBlockers() {
+      for (let room of _.values(Game.rooms)) {
+        const rv = room.visual;
+        if (room.memory.walls && room.memory.walls.layer) {
+          for (let layer of Object.keys(room.memory.walls.layer)) {
+            for (let pos of room.memory.walls.layer[layer]) {
+              this.drawPosition(rv, pos, layer, 'blue');
+              rv.rect(pos.x - 0.5, pos.y - 0.5, 1, 1, {
+                fill: 'transparent',
+                stroke: 'blue'
               });
+            }
+          }
+        }
+        if (room.memory.walls && room.memory.walls.ramparts) {
+          for (let pos of room.memory.walls.ramparts) {
+            rv.circle(pos, {
+              radius: 0.5,
+              fill: 'transparent',
+              stroke: 'blue'
             });
           }
         }
-        // draw creep paths from using moveTo
-        if (config.visualizer.showCreepPaths) {
-          _.each(Game.creeps, creep => {
-            if (creep.room != room) {
-              return;
-            }
-            let mem = creep.memory;
-            if (mem._move) {
-              let path = Room.deserializePath(mem._move.path);
-              if (path.length !== 0) {
-                visual.drawLine(path.map(p => ([p.x, p.y])), COLOR_RED, {
-                  lineWidth: 0.1
-                });
+      }
+    },
+
+    /**
+     * draw creep positions
+     */
+    showCreeps() {
+      for (let room of _.values(Game.rooms)) {
+        const rv = room.visual;
+        if (room.memory.position) {
+          let creeps = room.memory.position.creep;
+          for (let positionName of Object.keys(creeps)) {
+            if (creeps[positionName]) {
+              if (creeps[positionName].x || creeps[positionName].y) {
+                let text = positionName.substr(0, 1);
+                this.drawPosition(rv, creeps[positionName], text, 'yellow');
+              } else {
+                let text = positionName.substr(0, 1);
+                for (let towerfiller of creeps[positionName]) {
+                  this.drawPosition(rv, towerfiller, text, 'yellow');
+                }
               }
             }
-          });
-        }
-        // draw structures
-        if (config.visualizer.showStructures && room.memory.position && room.memory.position.structure) {
-          let structures = room.memory.position.structure;
-          _.each(Object.keys(structures), structType => {
-            let text = structType.substr(0, 1).toUpperCase();
-            _.each(structures[structType], structure => {
-              visual.drawCell(structure.x, structure.y, COLOR_BLUE);
-              visual.fillStyle = 'blue';
-              visual.fillText(text, structure.x + 0.2, structure.y + 0.85);
-            });
-          });
-        }
-        // draw creep positions
-        if (config.visualizer.showCreeps && room.memory.position) {
-          let creeps = room.memory.position.creep;
-          _.each(Object.keys(creeps), position => {
-            if (position.x || position.y) {
-              let text = position.substr(0, 1);
-              visual.drawCell(position.x, position.y, COLOR_YELLOW);
-              visual.fillStyle = 'yellow';
-              visual.fillText(text, position.x + 0.3, position.y + 0.75);
-            } else {
-              _.each(creeps[position], towerfiller => {
-                let text = position.substr(0, 1);
-                visual.drawCell(towerfiller.x, towerfiller.y, COLOR_YELLOW);
-                visual.fillStyle = 'yellow';
-                visual.fillText(text, towerfiller.x + 0.3, towerfiller.y + 0.75);
-              });
-            }
-          });
-        }
-
-        if (config.visualizer.showRoomInfo) {
-          let info = [];
-
-          info.push('Room ' + room.name);
-
-          if (room.controller && room.controller.my) {
-            info.push('Controller Lv.' + room.controller.level + ' - Progress: ' + (Math.floor(room.controller.progress / room.controller.progressTotal * 10000) / 100) + '%');
           }
-          if (room.storage && room.storage.my) {
-            info.push('Storage energy: ' + global.utils.toThousands(room.storage.store[RESOURCE_ENERGY]));
-          }
-
-          let containersEnergy = _.sum(room.findPropertyFilter(FIND_STRUCTURES, 'structureType', [STRUCTURE_CONTAINER]), object => object.store[RESOURCE_ENERGY]);
-          if (containersEnergy > 0) {
-            info.push('Container energy: ' + global.utils.toThousands(containersEnergy));
-          }
-
-          let dropedEnergy = _.sum(room.findPropertyFilter(FIND_DROPPED_RESOURCES, 'resourceType', [RESOURCE_ENERGY]), object => object.amount);
-          if (dropedEnergy > 0) {
-            info.push('Droped energy: ' + global.utils.toThousands(dropedEnergy));
-          }
-
-          let spawns = room.find(FIND_MY_SPAWNS, {
-            filter: s => s.spawning
-          });
-          _.each(spawns, spawn => {
-            info.push('Spawning ' + spawn.spawning.name + ' - remaining: ' + spawn.spawning.remainingTime + ' / ' + spawn.spawning.needTime);
-          });
-
-          if (room.memory.queue && room.memory.queue.length > 0) {
-            info.push('In queue: ' + room.memory.queue.map(q => q.role).join(', '));
-          }
-
-          let roomVisual = new RoomVisual(room.name);
-          let y = 0;
-          _.each(info, text => {
-            roomVisual.text(text, 0, y++, {
-              color: 'green',
-              font: '0.6 Noto Sans',
-              stroke: 'black',
-              align: 'left'
-            });
-          });
         }
-
-        if (config.visualizer.showCreepsInfo) {
-          let creepInfo = [];
-
-          creepInfo.push('My creeps:');
-
-          let myCreeps = _.groupBy(room.find(FIND_MY_CREEPS), creep => creep.memory.role);
-          _.each(myCreeps, (creeps, role) => {
-            creepInfo.push(role + ': ' + creeps.length.toString().rpad(' ', 2));
-          });
-
-          let roomVisual = new RoomVisual(room.name);
-          let z = 0;
-          _.each(creepInfo, text => {
-            roomVisual.text(text, 49, z++, {
-              color: 'green',
-              font: '0.6 Noto Sans',
-              stroke: 'black',
-              align: 'right'
-            });
-          });
-        }
-
-        visual.commit();
-      });
-      return true;
-    },
-    // TODO: TEST
-    // Draws provided deserialized path -- untested
-    showPath: function(path) {
-      let visual = new Visual(path);
-      let colors = [];
-      let COLOR_RED = colors.push('rgba(249,8,8,0.5)') - 1;
-
-      if (path.length) {
-        visual.drawLine(path.path.map(p => ([p.x, p.y])), COLOR_RED, {
-          lineWidth: 0.1
-        });
-        visual.commit();
-        return true;
       }
-      return false;
-    },
-    // TODO: TEST
-    // Removes provided deserialized path from canvas -- untested
-    hidePath: function(path) {
-      let visual = new Visual(path);
-      visual.commit();
-      RawVisual.commit();
-      return true;
     },
 
-    // renders one frame, this frame will stay in memory and keep showing in the client until you restart it or run visualizer.clear()
-    render: function() {
-      if (!config.visualizer.refresh) {
-        console.log('Visualizer rendering frame...');
+    showCostMatrix(roomName, costMatrixCallback) {
+      const rv = new RoomVisual(roomName);
+      const cm = costMatrixCallback(roomName);
+      if (cm) {
+        for (let x = 0; x < 50; ++x) {
+          for (let y = 0; y < 50; ++y) {
+            rv.rect(x - 0.5, y - 0.5, 1, 1, {
+              fill: 'pink',
+              opacity: Math.pow(cm.get(x, y) / 255, 1 / 4)
+            });
+          }
+        }
       }
-      if (!this.showPaths()) {
-        return false;
+    },
+
+    showCostMatrixes() {
+      for (let room of _.values(Game.rooms)) {
+        this.showCostMatrix(room.name, room.getCostMatrixCallback());
       }
-      RawVisual.commit();
-      return true;
     },
 
-    // clears the screen of roomPaths, not that this wont really do much if you have config.visualizer.refreh = true
-    // TODO fix so it clears the paths drawn for creeps aswell, even ones gone from memory.
-    clear: function() {
-      console.log('Visualizer clearing frame.');
-      _.each(Game.rooms, (room, name) => {
-        let visual = new Visual(name);
-        visual.commit();
-      });
-      RawVisual.commit();
-      return true;
+    showSearch(search) {
+      if (search) {
+        const rv = {};
+        const getRV = pos => {
+          if (!rv[pos.roomName]) {
+            rv[pos.roomName] = new RoomVisual(pos.roomName);
+          }
+          return rv[pos.roomName];
+        };
+        let prevPos = search.path[0];
+        let style = {color: search.incomplete ? 'red' : 'green'};
+        for (let pi of search.path) {
+          if (prevPos.roomName === pi.roomName) {
+            getRV(pi).line(prevPos, pi, style);
+          } else {
+            const dx = prevPos.x === 0 ? -0.5 : prevPos.x === 49 ? 0.5 : 0;
+            const dy = prevPos.y === 0 ? -0.5 : prevPos.y === 49 ? 0.5 : 0;
+            getRV(prevPos).line(prevPos.x, prevPos.y, prevPos.x + dx, prevPos.y + dy, style);
+            getRV(pi).line(pi.x, pi.y, pi.x - dx, pi.y - dy, style);
+          }
+          prevPos = pi;
+        }
+      }
     },
 
-    // Loads the screeps-visual script for the client
-    run: function() {
-      return console.log('<script>' +
-        'if(!window.visualLoaded){' +
-        '  $.getScript("https://screepers.github.io/screeps-visual/src/visual.screeps.user.js");' +
-        '  window.visualLoaded = true;' +
-        '}</script>');
-    },
+    render() {
+      if (config.visualizer.showCostMatrixes) {
+        this.showCostMatrixes();
+      }
+      if (config.visualizer.showRoomPaths) {
+        this.showRoomPaths();
+      }
+      if (config.visualizer.showCreepPaths) {
+        this.showCreepPaths();
+      }
+      if (config.visualizer.showStructures) {
+        this.showStructures();
+      }
+      if (config.visualizer.showCreeps) {
+        this.showCreeps();
+      }
+      if (config.visualizer.showBlockers) {
+        this.showBlockers();
+      }
+    }
   };
-  visualizer.run();
 }
