@@ -170,6 +170,9 @@ Room.prototype.reserveRoom = function(targetRoom) {
   if (Game.rooms[targetRoom]) {
     controllerId = Game.rooms[targetRoom].controller.id;
   }
+  if (!Memory.rooms[targetRoom]) {
+    Memory.rooms[targetRoom] = {};
+  }
   if (Memory.rooms[targetRoom].reservation) {
     controllerId = Memory.rooms[targetRoom].reservation.controller;
   } else {
@@ -191,9 +194,11 @@ Room.prototype.unreserveRoom = function(targetRoom) {
     room.clearRoom();
   }
 
-  let memory = Memory.rooms[targetRoom];
-  delete memory.reservation;
-  delete memory.state;
+  if (!Memory.rooms[targetRoom]) {
+    Memory.rooms[targetRoom] = {};
+  }
+  delete Memory.rooms[targetRoom].reservation;
+  delete Memory.rooms[targetRoom].state;
 
   if (this.memory.reserve.indexOf(targetRoom) > -1) {
     this.memory.reserve.splice(this.memory.reserve.indexOf(targetRoom), 1);

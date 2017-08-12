@@ -415,7 +415,7 @@ Room.prototype.executeRoom = function() {
       }
     }
   }
-  if (config.mineral.enabled && this.terminal) {
+  if (config.mineral.enabled && this.terminal && this.storage) {
     this.checkRoleToSpawn('mineral');
   }
 
@@ -560,7 +560,7 @@ Room.prototype.checkAndSpawnReserverForReservedRoom = function() {
   }
   for (let roomName of this.memory.reserve) {
     let roomMemory = Memory.rooms[roomName];
-    if (Game.rooms[roomName]) {
+    if (Game.rooms[roomName] || !roomMemory) {
       // In this case, spawn by handleReservedRoom method
       continue;
     }
