@@ -147,7 +147,7 @@ if (config.visualizer.enabled) {
           return rv[pos.roomName];
         };
         let prevPos = search.path[0];
-        let style = {color: search.incomplete ? 'red' : 'green'};
+        let style = { color: search.incomplete ? 'red' : 'green' };
         for (let pi of search.path) {
           if (prevPos.roomName === pi.roomName) {
             getRV(pi).line(prevPos, pi, style);
@@ -159,6 +159,75 @@ if (config.visualizer.enabled) {
           }
           prevPos = pi;
         }
+      }
+    },
+
+    showRoomsInfo() {
+      for (let room of _.values(Game.rooms)) {
+        this.showRoomInfo(room);
+      }
+    },
+
+    showRoomInfo(room) {
+      if (config.visualizer.showRoomInfo) {
+        let info = ['Room ' + room.name];
+        if (room.controller && room.controller.my) {
+          info.push('Controller Lv.' + room.controller.level + ' - Progress: ' + (Math.floor(room.controller.progress / room.controller.progressTotal * 10000) / 100) + '%');
+        }
+        if (room.storage && room.storage.my) {
+          info.push('Storage energy: ' + global.utils.toThousands(room.storage.store[RESOURCE_ENERGY]));
+        }
+
+        let containersEnergy = _.sum(room.findPropertyFilter(FIND_STRUCTURES, 'structureType', [STRUCTURE_CONTAINER]), object => object.store[RESOURCE_ENERGY]);
+        if (containersEnergy > 0) {
+          info.push('Container energy: ' + global.utils.toThousands(containersEnergy));
+        }
+
+        let dropedEnergy = _.sum(room.findPropertyFilter(FIND_DROPPED_RESOURCES, 'resourceType', [RESOURCE_ENERGY]), object => object.amount);
+        if (dropedEnergy > 0) {
+          info.push('Droped energy: ' + global.utils.toThousands(dropedEnergy));
+        }
+
+        let spawns = room.find(FIND_MY_SPAWNS, {
+          filter: s => s.spawning
+        });
+        _.each(spawns, spawn => {
+          info.push('Spawning ' + spawn.spawning.name + ' - remaining: ' + spawn.spawning.remainingTime + ' / ' + spawn.spawning.needTime);
+        });
+
+        if (room.memory.queue && room.memory.queue.length > 0) {
+          info.push('In queue: ' + room.memory.queue.map(q => q.role).join(', '));
+        }
+
+        let roomVisual = new RoomVisual(room.name);
+        let y = 0;
+        _.each(info, text => {
+          roomVisual.text(text, 0, y++, {
+            color: 'green',
+            font: '0.6 Noto Sans',
+            stroke: 'black',
+            align: 'left'
+          });
+        });
+      }
+
+      if (config.visualizer.showCreepsInfo) {
+        let creepInfo = ['My creeps:'];
+        let myCreeps = _.groupBy(room.find(FIND_MY_CREEPS), creep => creep.memory.role);
+        _.each(myCreeps, (creeps, role) => {
+          creepInfo.push(role + ': ' + creeps.length.toString().rpad(' ', 2));
+        });
+
+        let roomVisual = new RoomVisual(room.name);
+        let z = 0;
+        _.each(creepInfo, text => {
+          roomVisual.text(text, 49, z++, {
+            color: 'green',
+            font: '0.6 Noto Sans',
+            stroke: 'black',
+            align: 'right'
+          });
+        });
       }
     },
 
@@ -181,6 +250,7 @@ if (config.visualizer.enabled) {
       if (config.visualizer.showBlockers) {
         this.showBlockers();
       }
+      this.showRoomsInfo();
     }
   };
 }
