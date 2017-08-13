@@ -248,7 +248,7 @@ Room.prototype.applyAmount = function(input, amount) {
   if (!input) {
     return '';
   }
-  if (typeof amount === undefined) {
+  if (amount === undefined) {
     return input;
   }
   let cost = 0;
@@ -334,7 +334,7 @@ Room.prototype.getPartConfig = function(creep) {
   if (layout.len === 0) {
     maxRepeat = 0;
   }
-  if (maxLayoutAmount) {
+  if (maxLayoutAmount !== undefined) {
     maxRepeat = Math.min(maxLayoutAmount, maxRepeat);
   }
   if (maxRepeat > 0) {
@@ -351,7 +351,7 @@ Room.prototype.getPartConfig = function(creep) {
     if (config.debug.getPartsConfLogs) {
       this.log('[getPartConfig] sufix data: ' + JSON.stringify(sufix));
     }
-    parts = parts.concat(sufix.parts);
+    parts = parts.concat(sufix.parts || []);
     energyAvailable -= sufix.cost || 0;
   }
 
