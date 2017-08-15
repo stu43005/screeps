@@ -211,7 +211,8 @@ global.config = {
   },
 
   terminal: {
-    energyAmount: 100000,
+    minEnergyAmount: 80000,
+    maxEnergyAmount: 120000,
     storageMinEnergyAmount: 20000
   },
 
