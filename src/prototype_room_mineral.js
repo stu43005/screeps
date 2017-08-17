@@ -188,7 +188,7 @@ Room.prototype.handleTerminal = function() {
     return false;
   }
 
-  this.memory.terminalTooLessEnergy = false;
+  delete this.memory.terminalTooLessEnergy;
 
   if (this.terminal.store[resource] < order) {
     return false;
