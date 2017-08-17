@@ -5,10 +5,10 @@ Room.prototype.creepMem = function(role, targetId, targetRoom, level, base) {
     role: role,
     routing: {
       targetRoom: targetRoom || this.name,
-      targetId: targetId,
+      targetId: targetId
     },
     level: level,
-    base: base,
+    base: base
   };
 };
 
@@ -364,7 +364,7 @@ Room.prototype.getPartConfig = function(creep) {
   }
 
   if (config.debug.spawn) {
-    this.log('Spawning ' + creep.role + ' - - - Body: ' + JSON.stringify(prefix.parts) + ' - ' + maxRepeat + ' * ' + JSON.stringify(layout.parts) + ' - ' + JSON.stringify(sufix.parts));
+    this.log('Spawning ' + creep.role + ' - - - Body: ' + JSON.stringify(prefix.parts) + ' - ' + maxRepeat + ' * ' + JSON.stringify(layout.parts) + ' - ' + JSON.stringify(sufix.parts) + ' - parts: ' + JSON.stringify(parts));
   }
   return config.creep.sortParts ? this.sortParts(parts, layout) : parts;
 };
