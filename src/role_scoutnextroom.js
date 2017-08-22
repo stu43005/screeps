@@ -36,6 +36,7 @@ roles.scoutnextroom.execute = function(creep) {
     if (config.creep.structurer && creep.room.exectueEveryTicks(config.creep.structurerInterval)) {
       roles.scoutnextroom.callStructurer(creep);
     }
+    creep.callDefender();
     return true;
   }
 
