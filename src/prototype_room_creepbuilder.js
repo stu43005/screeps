@@ -298,38 +298,20 @@ Room.prototype.getPartConfig = function(creep) {
     amount,
     maxLayoutAmount,
     sufixString,
-    fillTough,
+    fillTough
   } = this.getSettings(creep);
   let maxBodyLength = MAX_CREEP_SIZE;
   if (prefixString) { maxBodyLength -= prefixString.length; }
   if (sufixString) { maxBodyLength -= sufixString.length; }
 
-  // prefix
-  if (config.debug.getPartsConfLogs) {
-    this.log('[getPartConfig] prefix: ' + prefixString + ', ' + energyAvailable);
-  }
   let prefix = this.getPartsStringDatas(prefixString, energyAvailable);
-  if (prefix.fail) {
-    return false;
-  }
-  if (config.debug.getPartsConfLogs) {
-    this.log('[getPartConfig] prefix data: ' + JSON.stringify(prefix));
-  }
+  if (prefix.fail) { return false; }
   let parts = prefix.parts || [];
   energyAvailable -= prefix.cost || 0;
 
-  // layout
   layoutString = this.applyAmount(layoutString, amount);
-  if (config.debug.getPartsConfLogs) {
-    this.log('[getPartConfig] layout: ' + layoutString + ', ' + energyAvailable);
-  }
   let layout = this.getPartsStringDatas(layoutString, energyAvailable);
-  if (layout.fail || layout.null) {
-    return false;
-  }
-  if (config.debug.getPartsConfLogs) {
-    this.log('[getPartConfig] layout data: ' + JSON.stringify(layout));
-  }
+  if (layout.fail || layout.null) { return false; }
   let maxRepeat = Math.floor(Math.min(energyAvailable / layout.cost, maxBodyLength / layout.len));
   if (layout.len === 0) {
     maxRepeat = 0;
@@ -342,15 +324,8 @@ Room.prototype.getPartConfig = function(creep) {
   }
   energyAvailable -= layout.cost * maxRepeat;
 
-  // sufix
-  if (config.debug.getPartsConfLogs) {
-    this.log('[getPartConfig] sufix: ' + sufixString + ', ' + energyAvailable);
-  }
   let sufix = this.getPartsStringDatas(sufixString, energyAvailable);
   if (!sufix.fail && !sufix.null) {
-    if (config.debug.getPartsConfLogs) {
-      this.log('[getPartConfig] sufix data: ' + JSON.stringify(sufix));
-    }
     parts = parts.concat(sufix.parts || []);
     energyAvailable -= sufix.cost || 0;
   }

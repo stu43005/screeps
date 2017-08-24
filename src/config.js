@@ -48,7 +48,10 @@ global.config = {
     costMatrixMemoryMaxGCL: 15
   },
 
+  // use username `tooangels` and password `tooSecretPassword` at https://screepspl.us/grafana
   stats: {
+    screepsPlusEnabled: false,
+    screepsPlusToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRvb2FuZ2VscyIsImlhdCI6MTQ4MzU2MTU3OSwiYXVkIjoic2NyZWVwc3BsLnVzIiwiaXNzIjoic2NyZWVwc3BsLnVzIn0.NhobT7Jg8bOAg-MYqrYsgeMgXEVXGVYG9s3G9Qpfm-o',
     enabled: true,
     summary: false
   },
@@ -219,8 +222,16 @@ global.config = {
   mineral: {
     enabled: true,
     storage: 100000,
-    minAmount: 5000,
-    minAmountForMarket: 100000
+    minAmount: 5000
+  },
+
+  market: {
+    minAmount: 100000,
+    energyCreditEquivalent: 1,
+    trySellOrders: true,
+    sellOrderMaxAmount: 100,
+    sellOrderReserve: 2000,
+    sellOrderPriceMultiplicator: 5
   },
 
   priorityQueue: {
