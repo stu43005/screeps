@@ -106,11 +106,11 @@ Room.prototype.setFillerArea = function(storagePos, route) {
 };
 
 Room.prototype.updatePosition = function() {
+  this.deleteMemoryPaths();
   this.checkCache();
 
   let costMatrixBase = this.getCostMatrix();
   this.setMemoryCostMatrix(costMatrixBase);
-  this.memory.routing = {};
   this.memory.position = {
     creep: {}
   };
