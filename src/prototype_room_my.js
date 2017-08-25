@@ -372,12 +372,12 @@ Room.prototype.executeRoom = function() {
         this.reviveMyNow();
         this.memory.wayBlocked = false;
       }
-    }
 
-    if (this.exectueEveryTicks(10)) {
-      this.log('Under attack from ' + hostiles[0].owner.username);
-      if (hostiles[0].owner.username != 'Invader') {
-        Game.notify(this.name + ' Under attack from ' + hostiles[0].owner.username + ' at ' + Game.time);
+      if (this.exectueEveryTicks(10)) {
+        this.log('Under attack from ' + hostiles[0].owner.username);
+        if (hostiles[0].owner.username != 'Invader') {
+          Game.notify(this.name + ' Under attack from ' + hostiles[0].owner.username + ' at ' + Game.time);
+        }
       }
     }
   }
