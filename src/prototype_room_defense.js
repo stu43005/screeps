@@ -131,7 +131,7 @@ Room.prototype.handleTower = function() {
 
   let repair_min = this.memory.repair_min;
   let low_rampart_filter = rampart => rampart.hits < Math.max(10000, repair_min * 0.1);
-  let repairable_structures = object => object.hits !== object.hitsMax;
+  let repairable_structures = object => object.hits < object.hitsMax / 2;
   let repairable_blockers = object => object.hits < Math.min(repair_min, object.hitsMax);
 
   for (let tower of towers) {
@@ -154,9 +154,7 @@ Room.prototype.handleTower = function() {
     }
 
     let to_repair = tower.pos.findClosestByRangePropertyFilter(FIND_STRUCTURES, 'structureType', [
-      STRUCTURE_WALL, STRUCTURE_RAMPART,
-      // TODO Let see if the creeps can keep the roads alive
-      // STRUCTURE_ROAD
+      STRUCTURE_WALL, STRUCTURE_RAMPART
     ], true, { filter: repairable_structures });
 
     if (to_repair === null) {
