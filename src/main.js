@@ -29,7 +29,7 @@ if (config.profiler.enabled) {
 }
 
 var main = function() {
-  if (Game.cpu.bucket < 2 * Game.cpu.tickLimit) {
+  if (Game.cpu.bucket < 2 * (Game.cpu.limit + 500)) {
     console.log('Skipping tick ' + Game.time + ' due to lack of CPU.');
     return;
   }
