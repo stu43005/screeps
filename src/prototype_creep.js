@@ -29,6 +29,9 @@ Creep.prototype.mySignController = function() {
 
 Creep.prototype.moveToMy = function(target, range) {
   range = range || 1;
+  if (!target.roomName && !target.x && !target.y && target.pos && (target.pos instanceof RoomPosition)) {
+    target = target.pos;
+  }
   const search = PathFinder.search(
     this.pos, {
       pos: target,
