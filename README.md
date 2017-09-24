@@ -22,7 +22,8 @@ from November 2015 - March 2016. Main Goal is to automate everything, no
 manual interaction needed.
 
 The AI is deployable on a private screeps server, follow the information on
-[Steam](http://steamcommunity.com/sharedfiles/filedetails/?id=800902233).
+[Steam](http://steamcommunity.com/sharedfiles/filedetails/?id=800902233) or
+`npm install screeps-bot-tooangel` and `bots.spawn('screeps-bot-tooangel', ROOMNAME)`
 
 ## Note
 
@@ -44,6 +45,7 @@ welcome.
  - [Manual commands](doc/Manual.md)
  - [Alliance](doc/Alliance.md)
  - [Graphs](doc/Graphs.md)
+ - [Testing](doc/Testing.md)
 
 ## Tweaking
 
