@@ -34,11 +34,6 @@ Room.prototype.spawnCheckForCreate = function() {
   if (this.memory.queue.length === 0) {
     return false;
   }
-  if (!this.exectueEveryTicks(10)) {
-    if (this.energyAvailable < this.energyCapacityAvailable - 300) {
-      return false;
-    }
-  }
   this.memory.queue = _.sortBy(this.memory.queue, c => this.getPriority(c));
 
   let creep = this.memory.queue[0];
