@@ -13,7 +13,7 @@ roles.mineral.boostActions = ['capacity'];
 roles.mineral.settings = {
   layoutString: 'MC',
   amount: [2, 2],
-  maxLayoutAmount: 10
+  maxLayoutAmount: 10,
 
 };
 

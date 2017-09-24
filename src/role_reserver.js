@@ -14,15 +14,15 @@ roles.reserver.flee = false;
 
 roles.reserver.settings = {
   layoutString: 'MK',
-  maxLayoutAmount: 1
+  maxLayoutAmount: 1,
 };
 roles.reserver.updateSettings = function(room, creep) {
-  let partsData = room.getPartsStringDatas(roles.reserver.settings.layoutString);
-  let level = creep.level ? creep.level : 1;
-  for (var l = level; l > 0; l--) {
+  const partsData = room.getPartsStringDatas(roles.reserver.settings.layoutString);
+  const level = creep.level ? creep.level : 1;
+  for (let l = level; l > 0; l--) {
     if (room.energyCapacityAvailable > partsData.cost * l) {
       return {
-        amount: [l, l]
+        amount: [l, l],
       };
     }
   }

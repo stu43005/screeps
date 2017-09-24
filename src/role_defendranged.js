@@ -11,11 +11,11 @@ roles.defendranged.boostActions = ['fatigue', 'rangedAttack', 'damage'];
 
 roles.defendranged.settings = {
   layoutString: 'MR',
-  fillTough: true
+  fillTough: true,
 };
 
 // TODO This overwrites the target so redo and enable again
-//module.exports.action = function(creep) {
+// module.exports.action = function(creep) {
 //  creep.memory.countdown = creep.memory.countdown || 100;
 //
 //  let hostiles = creep.room.getEnemys();
@@ -41,12 +41,12 @@ roles.defendranged.settings = {
 //
 //  creep.say('fightRanged');
 //  return creep.fightRanged(target);
-//};
+// };
 
 roles.defendranged.execute = function(creep) {
   creep.memory.countdown = creep.memory.countdown || 100;
 
-  let recycleCreep = function(creep) {
+  const recycleCreep = function(creep) {
     creep.say('recycle');
     if (creep.room.controller && creep.room.controller.my) {
       if (creep.memory.countdown > 0) {
@@ -56,7 +56,7 @@ roles.defendranged.execute = function(creep) {
         return false;
       }
     }
-    if (creep.room.name != creep.memory.base) {
+    if (creep.room.name !== creep.memory.base) {
       if (creep.stayInRoom()) {
         return true;
       }
@@ -73,10 +73,10 @@ roles.defendranged.execute = function(creep) {
     return true;
   }
 
-  hostiles = _.sortBy(hostiles, function(object) {
+  hostiles = _.sortBy(hostiles, (object) => {
     return creep.pos.getRangeTo(object.pos);
   });
-  let target = hostiles[0];
+  const target = hostiles[0];
   creep.memory.countdown = 100;
   creep.memory.target = target.pos;
 

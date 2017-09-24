@@ -15,44 +15,48 @@ roles.repairer.stayInRoom = true;
 
 roles.repairer.settings = {
   layoutString: 'MWC',
-  amount: [2, 1, 1]
-  //if (room.storage) {datas.maxEnergyUsed = (room.storage.store.energy / 10000) * 250;}
+  amount: [2, 1, 1],
+  // if (room.storage) {datas.maxEnergyUsed = (room.storage.store.energy / 10000) * 250;}
 };
 
 roles.repairer.boostActions = ['fatigue', 'repair', 'capacity'];
 
 // TODO needs to be enabled again, repair overwrites target
-//module.exports.action = function(creep) {
+// module.exports.action = function(creep) {
 //  return execute(creep);
-//};
+// };
 
 roles.repairer.execute = function(creep) {
-  creep.setNextSpawn();
-  creep.spawnReplacement(1);
-  if (!creep.memory.move_wait) {
-    creep.memory.move_wait = 0;
-  }
-
-  if (creep.memory.step <= 0) {
-    let structures = creep.room.findPropertyFilter(FIND_MY_STRUCTURES, 'structureType', [STRUCTURE_WALL, STRUCTURE_RAMPART]);
-    if (structures.length > 0) {
-      var min = structures[0].hits;
-
-      for (let structure of structures) {
-        if (min > structure.hits) {
-          min = structure.hits;
-        }
-      }
-      creep.memory.step = min;
+  const execute = function(creep) {
+    creep.setNextSpawn();
+    creep.spawnReplacement(1);
+    if (!creep.memory.move_wait) {
+      creep.memory.move_wait = 0;
     }
-  }
 
-  var methods = [Creep.getEnergy];
-  methods.push(Creep.repairStructure);
-  methods.push(Creep.constructTask);
+    if (creep.memory.step <= 0) {
+      const structures = creep.room.findPropertyFilter(FIND_STRUCTURES, 'structureType', [STRUCTURE_WALL, STRUCTURE_RAMPART]);
+      if (structures.length > 0) {
+        let min = WALL_HITS_MAX;
 
-  if (Creep.execute(creep, methods)) {
+        for (const structure of structures) {
+          if (min > structure.hits) {
+            min = structure.hits;
+          }
+        }
+        creep.memory.step = min;
+      }
+    }
+
+    const methods = [Creep.getEnergy];
+    methods.push(Creep.repairStructure);
+    methods.push(Creep.constructTask);
+
+    if (Creep.execute(creep, methods)) {
+      return true;
+    }
     return true;
-  }
-  return true;
+  };
+
+  return execute(creep);
 };

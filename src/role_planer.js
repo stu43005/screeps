@@ -13,11 +13,11 @@ roles.planer.boostActions = ['fatigue', 'build', 'capacity'];
 
 roles.planer.settings = {
   layoutString: 'MCW',
-  amount: [2, 1, 1]
+  amount: [2, 1, 1],
 };
 
 roles.planer.action = function(creep) {
-  var methods = [Creep.getEnergy];
+  const methods = [Creep.getEnergy];
 
   methods.push(Creep.constructTask);
   methods.push(Creep.buildRoads);
@@ -34,7 +34,7 @@ roles.planer.action = function(creep) {
 
 roles.planer.execute = function(creep) {
   creep.log('!!!! Execute !!!');
-  let methods = [Creep.getEnergy];
+  const methods = [Creep.getEnergy];
 
   methods.push(Creep.constructTask);
   methods.push(Creep.buildRoads);
