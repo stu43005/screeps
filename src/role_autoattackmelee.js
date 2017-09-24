@@ -11,7 +11,7 @@ roles.autoattackmelee.boostActions = ['fatigue', 'attack', 'damage'];
 
 roles.autoattackmelee.settings = {
   layoutString: 'MA',
-  amount: [5, 5],
+  amount: [1, 1],
   fillTough: true,
 };
 
